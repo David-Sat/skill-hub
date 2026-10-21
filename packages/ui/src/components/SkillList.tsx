@@ -31,8 +31,13 @@ export function SkillList({ skills, onSelectSkill }: SkillListProps) {
             <div className="card-header">
               <div>
                 <div className="card-title">{skill.name}</div>
-                <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
+                <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
                   <span className="pill pill-harness">{skill.harnessId}</span>
+                  {skill.bundle && skill.bundle !== 'standalone' && (
+                    <span className="pill" style={{ background: 'var(--accent-glow)', color: 'var(--accent)', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
+                      {skill.bundle}
+                    </span>
+                  )}
                   <span className="pill pill-scope">{skill.scope}</span>
                   {skill.status.hasUpdate && (
                     <span className="pill pill-update">Update v{skill.status.latestVersion}</span>
@@ -48,7 +53,7 @@ export function SkillList({ skills, onSelectSkill }: SkillListProps) {
 
             <div className="card-footer">
               <span>
-                📁 {skill.files.length} {skill.files.length === 1 ? 'file' : 'files'}
+                {skill.files.length} {skill.files.length === 1 ? 'file' : 'files'}
                 {scriptCount > 0 && ` (${scriptCount} script${scriptCount > 1 ? 's' : ''})`}
                 {schemaCount > 0 && ` (${schemaCount} schema${schemaCount > 1 ? 's' : ''})`}
               </span>

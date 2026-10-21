@@ -22,7 +22,7 @@ program
   .option('--no-open', 'Do not automatically open the browser')
   .action(async (options) => {
     const port = parseInt(options.port, 10) || 4350;
-    console.log('\n⚡ Starting Skill Hub server on 127.0.0.1...');
+    console.log('\n[Skill Hub] Starting server on 127.0.0.1...');
 
     try {
       const running = await startServer({
@@ -30,7 +30,7 @@ program
         autoOpen: options.open !== false,
       });
 
-      console.log(`✓ Skill Hub is active at: ${running.url}`);
+      console.log(`[OK] Skill Hub is active at: ${running.url}`);
       console.log('Press Ctrl+C to stop the server.\n');
 
       process.on('SIGINT', async () => {
@@ -50,19 +50,19 @@ program
   .description('Run a fast CLI scan of installed agent harnesses, skills, and MCPs')
   .option('--check-updates', 'Query registries for available updates', false)
   .action(async (options) => {
-    console.log('\n⚡ Scanning installed AI agent harnesses...\n');
+    console.log('\n[Skill Hub] Scanning installed AI agent harnesses...\n');
     const scanResult = scanAll();
 
     const activeHarnesses = scanResult.harnesses.filter((h) => h.detected);
 
     console.log(`Active Harnesses (${activeHarnesses.length}):`);
-    activeHarnesses.forEach((h) => console.log(`  • ${h.name}`));
+    activeHarnesses.forEach((h) => console.log(`  - ${h.name}`));
     console.log('');
 
     console.log(`Installed Skills: ${scanResult.skills.length}`);
     const heavySkills = scanResult.skills.filter((s) => s.tokens.tier === 'heavy');
     if (heavySkills.length > 0) {
-      console.log(`  🔴 Heavyweight (>4,000 tokens): ${heavySkills.length}`);
+      console.log(`  Heavyweight (>4,000 tokens): ${heavySkills.length}`);
       heavySkills.slice(0, 5).forEach((s) => {
         console.log(`     - ${s.name} (${s.harnessId}): ~${s.tokens.estimatedTokens} tokens`);
       });
@@ -71,7 +71,7 @@ program
 
     console.log(`Configured MCP Servers: ${scanResult.mcps.length}`);
     scanResult.mcps.slice(0, 6).forEach((m) => {
-      console.log(`  • ${m.name} (${m.harnessId}): ${m.command || m.url || 'stdio'}`);
+      console.log(`  - ${m.name} (${m.harnessId}): ${m.command || m.url || 'stdio'}`);
     });
     console.log('');
 
@@ -82,7 +82,7 @@ program
       updates.mcps
         .filter((m) => m.updateInfo.hasUpdate)
         .forEach((m) => {
-          console.log(`  🟡 MCP ${m.name} (${m.harnessId}): v${m.packageInfo.currentVersion} → v${m.updateInfo.latestVersion}`);
+          console.log(`  [Update] MCP ${m.name} (${m.harnessId}): v${m.packageInfo.currentVersion} -> v${m.updateInfo.latestVersion}`);
         });
     }
 

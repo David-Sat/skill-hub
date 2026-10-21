@@ -21,7 +21,7 @@ export function TokenBadge({ tokens, showDetails = false }: TokenBadgeProps) {
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
       <span className={`pill ${tierClass}`}>
-        <span>⚡ {estimatedTokens.toLocaleString()} tok</span>
+        <span>{estimatedTokens.toLocaleString()} tok</span>
         <span>•</span>
         <span>{tierLabel}</span>
       </span>

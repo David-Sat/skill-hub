@@ -31,7 +31,7 @@ Skill Hub scans all installed coding agent harnesses across your machine—showi
 
 Running `skill-hub init -g` provides an interactive checklist of detected coding tools:
 ```text
-⚡ Skill Hub Installer
+[Skill Hub] Installer
 
 Detected coding agent harnesses on this machine:
   1. [●] Google Antigravity
@@ -65,9 +65,9 @@ Automatically detects and aggregates skills and MCPs across:
 Never wonder why your context window is filling up before your conversation even starts:
 * **BPE Token Estimates**: Accurately computes token costs for `SKILL.md` files and rule sets.
 * **Context Weight Tiers**:
-  * 🟢 **Lean**: `< 1,000 tokens`
-  * 🟡 **Moderate**: `1,000 – 4,000 tokens`
-  * 🔴 **Heavy**: `> 4,000 tokens`
+  * **Lean**: `< 1,000 tokens`
+  * **Moderate**: `1,000 – 4,000 tokens`
+  * **Heavy**: `> 4,000 tokens`
 * **Metrics**: Line counts, character counts, and word counts.
 
 ### 3. Bundled Asset Explorer

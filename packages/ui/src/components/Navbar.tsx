@@ -24,7 +24,7 @@ export function Navbar({
   return (
     <header className="top-navbar">
       <div className="brand">
-        <div className="brand-logo">⚡</div>
+        <div className="brand-logo">SH</div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="brand-title">Skill Hub</span>
@@ -61,7 +61,7 @@ export function Navbar({
           onClick={onCheckUpdates}
           disabled={checkingUpdates}
         >
-          {checkingUpdates ? 'Checking...' : '🔄 Check Updates'}
+          {checkingUpdates ? 'Checking...' : 'Check Updates'}
         </button>
       </div>
     </header>

@@ -43,7 +43,7 @@ export function scanAllSkills(options: ScanSkillsOptions = {}): SkillItem[] {
       for (const p of plugins) {
         if (p.isDirectory()) {
           const pluginSkillDir = path.join(antigravityPluginsDir, p.name, 'skills');
-          scanDirectoryForSkills(pluginSkillDir, 'antigravity', 'global', addSkill);
+          scanDirectoryForSkills(pluginSkillDir, 'antigravity', 'global', addSkill, p.name);
         }
       }
     } catch {
@@ -53,11 +53,11 @@ export function scanAllSkills(options: ScanSkillsOptions = {}): SkillItem[] {
 
   // Antigravity builtin skills
   const antigravityBuiltinDir = path.join(geminiDir, 'antigravity', 'builtin', 'skills');
-  scanDirectoryForSkills(antigravityBuiltinDir, 'antigravity', 'builtin', addSkill);
+  scanDirectoryForSkills(antigravityBuiltinDir, 'antigravity', 'builtin', addSkill, 'builtin');
 
   // Antigravity workspace skills
   const workspaceGeminiSkills = path.join(workspace, '.gemini', 'skills');
-  scanDirectoryForSkills(workspaceGeminiSkills, 'antigravity', 'workspace', addSkill);
+  scanDirectoryForSkills(workspaceGeminiSkills, 'antigravity', 'workspace', addSkill, 'workspace');
 
   // 2. Claude Code Skills
   const claudeDir = path.join(home, '.claude');
@@ -71,7 +71,7 @@ export function scanAllSkills(options: ScanSkillsOptions = {}): SkillItem[] {
       for (const p of plugins) {
         if (p.isDirectory()) {
           const pluginSkillDir = path.join(claudePluginsDir, p.name, 'skills');
-          scanDirectoryForSkills(pluginSkillDir, 'claude-code', 'global', addSkill);
+          scanDirectoryForSkills(pluginSkillDir, 'claude-code', 'global', addSkill, p.name);
         }
       }
     } catch {
@@ -127,7 +127,8 @@ function scanDirectoryForSkills(
   parentDir: string,
   harnessId: HarnessId,
   scope: 'global' | 'workspace' | 'builtin',
-  onFound: (skill: SkillItem | null) => void
+  onFound: (skill: SkillItem | null) => void,
+  detectedBundle?: string
 ) {
   if (!fs.existsSync(parentDir)) return;
   try {
@@ -137,7 +138,7 @@ function scanDirectoryForSkills(
         const skillDirPath = path.join(parentDir, entry.name);
         const skillMdPath = path.join(skillDirPath, 'SKILL.md');
         if (fs.existsSync(skillMdPath)) {
-          onFound(createSkillFromDir(skillDirPath, skillMdPath, harnessId, scope, entry.name));
+          onFound(createSkillFromDir(skillDirPath, skillMdPath, harnessId, scope, entry.name, detectedBundle));
         }
       }
     }
@@ -153,7 +154,8 @@ function scanRulesDirectory(
   rulesDir: string,
   harnessId: HarnessId,
   scope: 'global' | 'workspace',
-  onFound: (skill: SkillItem | null) => void
+  onFound: (skill: SkillItem | null) => void,
+  detectedBundle?: string
 ) {
   if (!fs.existsSync(rulesDir)) return;
   try {
@@ -162,12 +164,23 @@ function scanRulesDirectory(
       if (entry.isFile() && (entry.name.endsWith('.mdc') || entry.name.endsWith('.md'))) {
         const filePath = path.join(rulesDir, entry.name);
         const baseName = path.basename(entry.name, path.extname(entry.name));
-        onFound(createSkillFromFile(filePath, harnessId, scope, baseName));
+        onFound(createSkillFromFile(filePath, harnessId, scope, baseName, detectedBundle));
       }
     }
   } catch {
     // ignore
   }
+}
+
+export function inferSkillBundle(name: string, fallbackBundle?: string): string {
+  if (fallbackBundle) return fallbackBundle;
+  const lower = name.toLowerCase();
+  if (lower.startsWith('firebase-') || lower === 'firebase') return 'firebase';
+  if (lower.startsWith('alphagenome-') || lower === 'alphagenome') return 'alphagenome';
+  if (lower.startsWith('chrome-') || lower.startsWith('a11y-')) return 'chrome-devtools';
+  if (lower.startsWith('literature-search-')) return 'literature';
+  if (lower.startsWith('lux-') || lower === 'lux') return 'lux-edit';
+  return 'standalone';
 }
 
 /**
@@ -178,20 +191,24 @@ export function createSkillFromDir(
   mainFilePath: string,
   harnessId: HarnessId,
   scope: 'global' | 'workspace' | 'builtin',
-  defaultName: string
+  defaultName: string,
+  detectedBundle?: string
 ): SkillItem | null {
   try {
     const content = fs.readFileSync(mainFilePath, 'utf-8');
     const parsed = parseSkillFrontmatter(content, defaultName);
     const tokens = estimateTokens(content);
     const bundledFiles = scanBundledFiles(dirPath, mainFilePath);
+    const skillName = parsed.name || defaultName;
+    const bundle = inferSkillBundle(skillName, detectedBundle);
 
     return {
-      id: `${harnessId}:${parsed.name || defaultName}`,
-      name: parsed.name || defaultName,
+      id: `${harnessId}:${skillName}`,
+      name: skillName,
       description: parsed.description,
       harnessId,
       scope,
+      bundle,
       dirPath,
       mainFilePath,
       metadata: parsed.metadata,
@@ -213,12 +230,15 @@ export function createSkillFromFile(
   filePath: string,
   harnessId: HarnessId,
   scope: 'global' | 'workspace',
-  defaultName: string
+  defaultName: string,
+  detectedBundle?: string
 ): SkillItem | null {
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
     const parsed = parseSkillFrontmatter(content, defaultName);
     const tokens = estimateTokens(content);
+    const skillName = parsed.name || defaultName;
+    const bundle = inferSkillBundle(skillName, detectedBundle);
 
     const bundledFiles: BundledFile[] = [
       {
@@ -230,11 +250,12 @@ export function createSkillFromFile(
     ];
 
     return {
-      id: `${harnessId}:${parsed.name || defaultName}`,
-      name: parsed.name || defaultName,
+      id: `${harnessId}:${skillName}`,
+      name: skillName,
       description: parsed.description,
       harnessId,
       scope,
+      bundle,
       dirPath: path.dirname(filePath),
       mainFilePath: filePath,
       metadata: parsed.metadata,

@@ -118,7 +118,7 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
   const harnesses = detectHarnesses();
   const detected = harnesses.filter((h) => h.detected);
 
-  console.log('\n⚡ Skill Hub Installer\n');
+  console.log('\n[Skill Hub] Installer\n');
 
   if (detected.length === 0) {
     console.log('No supported AI agent harnesses were detected in standard locations.');
@@ -127,7 +127,7 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
 
   console.log('Detected coding agent harnesses on this machine:');
   detected.forEach((h, idx) => {
-    console.log(`  ${idx + 1}. [●] ${h.name}`);
+    console.log(`  ${idx + 1}. [x] ${h.name}`);
   });
   console.log('');
 
@@ -165,47 +165,47 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
       case 'antigravity': {
         const pluginDir = path.join(home, '.gemini', 'config', 'plugins', 'skill-hub');
         writePluginBundle(pluginDir);
-        console.log(`  ✓ Installed Antigravity plugin and /skills into ${pluginDir}`);
+        console.log(`  [OK] Installed Antigravity plugin and /skills into ${pluginDir}`);
         break;
       }
       case 'claude-code': {
         if (h.paths.mcp) {
           mergeMcpServer(h.paths.mcp);
-          console.log(`  ✓ Added skill-hub MCP server to ${h.paths.mcp}`);
+          console.log(`  [OK] Added skill-hub MCP server to ${h.paths.mcp}`);
         }
         break;
       }
       case 'claude-desktop': {
         if (h.paths.mcp) {
           mergeMcpServer(h.paths.mcp);
-          console.log(`  ✓ Added skill-hub MCP server to ${h.paths.mcp}`);
+          console.log(`  [OK] Added skill-hub MCP server to ${h.paths.mcp}`);
         }
         break;
       }
       case 'cursor': {
         const cursorMcp = path.join(home, '.cursor', 'mcp.json');
         mergeMcpServer(cursorMcp);
-        console.log(`  ✓ Added skill-hub MCP server to ${cursorMcp}`);
+        console.log(`  [OK] Added skill-hub MCP server to ${cursorMcp}`);
         break;
       }
       case 'windsurf': {
         const windsurfMcp = path.join(home, '.codeium', 'windsurf', 'mcp_config.json');
         mergeMcpServer(windsurfMcp);
-        console.log(`  ✓ Added skill-hub MCP server to ${windsurfMcp}`);
+        console.log(`  [OK] Added skill-hub MCP server to ${windsurfMcp}`);
         break;
       }
       case 'cline':
       case 'roo-code': {
         if (h.paths.mcp) {
           mergeMcpServer(h.paths.mcp);
-          console.log(`  ✓ Added skill-hub MCP server to ${h.paths.mcp}`);
+          console.log(`  [OK] Added skill-hub MCP server to ${h.paths.mcp}`);
         }
         break;
       }
     }
   }
 
-  console.log('\n🎉 Setup complete! You can now launch Skill Hub anytime:');
-  console.log('   • Terminal: npx skill-hub');
-  console.log('   • Agent:    /skills\n');
+  console.log('\nSetup complete. You can now launch Skill Hub anytime:');
+  console.log('   - Terminal: skill-hub');
+  console.log('   - Agent:    /skills\n');
 }

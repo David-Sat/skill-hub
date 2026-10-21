@@ -64,6 +64,7 @@ export interface SkillItem {
   description: string;
   harnessId: HarnessId;
   scope: 'global' | 'workspace' | 'builtin';
+  bundle?: string;
   dirPath: string;
   mainFilePath: string;
   metadata: SkillMetadata;

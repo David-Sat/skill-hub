@@ -67,7 +67,7 @@ export function McpList({ mcps, onUpdateMcp, updatingMcpId }: McpListProps) {
                   disabled={isUpdating}
                   onClick={() => onUpdateMcp(mcp, mcp.updateInfo.latestVersion!)}
                 >
-                  {isUpdating ? 'Updating...' : `⚡ Update to v${mcp.updateInfo.latestVersion}`}
+                  {isUpdating ? 'Updating...' : `Update to v${mcp.updateInfo.latestVersion}`}
                 </button>
               )}
             </div>

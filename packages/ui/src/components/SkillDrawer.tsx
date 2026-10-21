@@ -165,7 +165,7 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
                   onClick={handleSave}
                   disabled={saving}
                 >
-                  {saving ? 'Saving...' : '💾 Save Changes'}
+                  {saving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </div>

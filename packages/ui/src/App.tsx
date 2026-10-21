@@ -16,6 +16,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState<'skills' | 'mcps'>('skills');
   const [selectedHarness, setSelectedHarness] = useState<'all' | HarnessId>('all');
   const [selectedScope, setSelectedScope] = useState<'all' | 'global' | 'workspace' | 'builtin'>('all');
+  const [selectedBundle, setSelectedBundle] = useState<string>('all');
   const [selectedTier, setSelectedTier] = useState<'all' | TokenTier>('all');
   const [showUpdatesOnly, setShowUpdatesOnly] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -137,6 +138,7 @@ export function App() {
     return data.skills.filter((s) => {
       if (selectedHarness !== 'all' && s.harnessId !== selectedHarness) return false;
       if (selectedScope !== 'all' && s.scope !== selectedScope) return false;
+      if (selectedBundle !== 'all' && s.bundle !== selectedBundle) return false;
       if (selectedTier !== 'all' && s.tokens.tier !== selectedTier) return false;
       if (showUpdatesOnly && !s.status.hasUpdate) return false;
       if (searchQuery.trim()) {
@@ -147,7 +149,16 @@ export function App() {
       }
       return true;
     });
-  }, [data, selectedHarness, selectedScope, selectedTier, showUpdatesOnly, searchQuery]);
+  }, [data, selectedHarness, selectedScope, selectedBundle, selectedTier, showUpdatesOnly, searchQuery]);
+
+  const bundles = useMemo(() => {
+    if (!data) return [];
+    const set = new Set<string>();
+    for (const s of data.skills) {
+      if (s.bundle) set.add(s.bundle);
+    }
+    return Array.from(set).sort();
+  }, [data]);
 
   // Filter MCPs
   const filteredMcps = useMemo(() => {
@@ -207,6 +218,9 @@ export function App() {
           onSelectHarness={setSelectedHarness}
           selectedScope={selectedScope}
           onSelectScope={setSelectedScope}
+          selectedBundle={selectedBundle}
+          onSelectBundle={setSelectedBundle}
+          bundles={bundles}
           selectedTier={selectedTier}
           onSelectTier={setSelectedTier}
           showUpdatesOnly={showUpdatesOnly}
@@ -245,7 +259,9 @@ export function App() {
 
       {toast && (
         <div className="toast">
-          <span>{toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}</span>
+          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: toast.type === 'success' ? 'var(--green)' : toast.type === 'error' ? 'var(--rose)' : 'var(--accent)' }}>
+            [{toast.type}]
+          </span>
           <span>{toast.message}</span>
         </div>
       )}

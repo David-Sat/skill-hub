@@ -6,6 +6,9 @@ interface SidebarProps {
   onSelectHarness: (id: 'all' | HarnessId) => void;
   selectedScope: 'all' | 'global' | 'workspace' | 'builtin';
   onSelectScope: (scope: 'all' | 'global' | 'workspace' | 'builtin') => void;
+  selectedBundle: string;
+  onSelectBundle: (bundle: string) => void;
+  bundles: string[];
   selectedTier: 'all' | TokenTier;
   onSelectTier: (tier: 'all' | TokenTier) => void;
   showUpdatesOnly: boolean;
@@ -22,6 +25,9 @@ export function Sidebar({
   onSelectHarness,
   selectedScope,
   onSelectScope,
+  selectedBundle,
+  onSelectBundle,
+  bundles,
   selectedTier,
   onSelectTier,
   showUpdatesOnly,
@@ -66,6 +72,27 @@ export function Sidebar({
       {activeTab === 'skills' && (
         <>
           <div>
+            <div className="sidebar-section-title">Bundle / Pack</div>
+            <div className="filter-list">
+              <button
+                className={`filter-item ${selectedBundle === 'all' ? 'active' : ''}`}
+                onClick={() => onSelectBundle('all')}
+              >
+                <span>All Bundles</span>
+              </button>
+              {bundles.map((b) => (
+                <button
+                  key={b}
+                  className={`filter-item ${selectedBundle === b ? 'active' : ''}`}
+                  onClick={() => onSelectBundle(b)}
+                >
+                  <span style={{ textTransform: 'capitalize' }}>{b.replace(/-/g, ' ')}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <div className="sidebar-section-title">Scope</div>
             <div className="filter-list">
               {(['all', 'global', 'workspace', 'builtin'] as const).map((sc) => (
@@ -93,19 +120,19 @@ export function Sidebar({
                 className={`filter-item ${selectedTier === 'lean' ? 'active' : ''}`}
                 onClick={() => onSelectTier('lean')}
               >
-                <span>🟢 Lean (&lt; 1,000)</span>
+                <span>Lean (&lt; 1,000)</span>
               </button>
               <button
                 className={`filter-item ${selectedTier === 'moderate' ? 'active' : ''}`}
                 onClick={() => onSelectTier('moderate')}
               >
-                <span>🟡 Moderate (1k - 4k)</span>
+                <span>Moderate (1k - 4k)</span>
               </button>
               <button
                 className={`filter-item ${selectedTier === 'heavy' ? 'active' : ''}`}
                 onClick={() => onSelectTier('heavy')}
               >
-                <span>🔴 Heavy (&gt; 4,000)</span>
+                <span>Heavy (&gt; 4,000)</span>
               </button>
             </div>
           </div>

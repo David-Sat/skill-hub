@@ -26,14 +26,14 @@ export function createMcpServer(): McpServer {
       const outdatedMcps = updates.mcps.filter((m) => m.updateInfo.hasUpdate);
       const outdatedSkills = updates.skills.filter((s) => s.status.hasUpdate);
 
-      let summary = `### ⚡ Skill Hub Audit Report\n\n`;
+      let summary = `### Skill Hub Audit Report\n\n`;
       summary += `* **Active Harnesses (${activeHarnesses.length}):** ${activeHarnesses.join(', ')}\n`;
       summary += `* **Total Installed Skills:** ${scanResult.skills.length}\n`;
       summary += `* **Total Configured MCPs:** ${scanResult.mcps.length}\n`;
       summary += `* **Pending Updates:** ${updates.updatesCount} (${outdatedMcps.length} MCPs, ${outdatedSkills.length} Skills)\n\n`;
 
       if (heavySkills.length > 0) {
-        summary += `#### 🔴 Heavyweight Skills (> 4,000 tokens):\n`;
+        summary += `#### Heavyweight Skills (> 4,000 tokens):\n`;
         for (const s of heavySkills) {
           summary += `* **${s.name}** (${s.harnessId}): ~${s.tokens.estimatedTokens.toLocaleString()} tokens (${s.files.length} bundled files)\n`;
         }
@@ -41,7 +41,7 @@ export function createMcpServer(): McpServer {
       }
 
       if (outdatedMcps.length > 0) {
-        summary += `#### 🟡 Available MCP Updates:\n`;
+        summary += `#### Available MCP Updates:\n`;
         for (const m of outdatedMcps) {
           summary += `* **${m.name}** (${m.harnessId}): v${m.packageInfo.currentVersion || '?'} → **v${m.updateInfo.latestVersion}**\n`;
         }
