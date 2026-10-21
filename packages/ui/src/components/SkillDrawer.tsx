@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
 import type { SkillItem } from '@skill-hub/core';
-import { TokenBadge } from './TokenBadge.js';
 
 interface SkillDrawerProps {
   skill: SkillItem | null;
@@ -45,13 +44,23 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
       <div className="drawer" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-header">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 600 }}>{skill.name}</h2>
-              <span className="pill pill-harness">{skill.harnessId}</span>
-              <span className="pill pill-scope">{skill.scope}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--fg-default)' }}>{skill.name}</h2>
+              <span className="badge">{skill.scope}</span>
+              {skill.bundle && skill.bundle !== 'standalone' && (
+                <span className="badge badge-bundle">{skill.bundle}</span>
+              )}
+              <span className="badge">{skill.harnessId}</span>
             </div>
-            <div style={{ marginTop: '8px' }}>
-              <TokenBadge tokens={skill.tokens} showDetails />
+            <div style={{ marginTop: '6px', fontSize: '12px', color: 'var(--fg-muted)', display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className={`status-dot ${skill.tokens.tier}`}></span>
+                <span style={{ fontFamily: 'var(--font-mono)' }}>
+                  {skill.tokens.estimatedTokens.toLocaleString()} tokens
+                </span>
+              </span>
+              <span>{skill.tokens.lineCount} lines</span>
+              <span>{skill.tokens.charCount.toLocaleString()} chars</span>
             </div>
           </div>
           <button
@@ -59,37 +68,38 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
             style={{
               background: 'transparent',
               border: 'none',
-              color: 'var(--text-muted)',
-              fontSize: '20px',
+              color: 'var(--fg-muted)',
+              fontSize: '18px',
               cursor: 'pointer',
               padding: '4px 8px',
+              borderRadius: '4px',
             }}
           >
             ✕
           </button>
         </div>
 
-        <div className="drawer-tabs">
+        <div className="drawer-subnav">
           <button
-            className={`drawer-tab ${activeTab === 'preview' ? 'active' : ''}`}
+            className={`drawer-subnav-btn ${activeTab === 'preview' ? 'active' : ''}`}
             onClick={() => setActiveTab('preview')}
           >
             Instructions
           </button>
           <button
-            className={`drawer-tab ${activeTab === 'files' ? 'active' : ''}`}
+            className={`drawer-subnav-btn ${activeTab === 'files' ? 'active' : ''}`}
             onClick={() => setActiveTab('files')}
           >
             Bundled Assets ({skill.files.length})
           </button>
           <button
-            className={`drawer-tab ${activeTab === 'raw' ? 'active' : ''}`}
+            className={`drawer-subnav-btn ${activeTab === 'raw' ? 'active' : ''}`}
             onClick={() => setActiveTab('raw')}
           >
             Raw
           </button>
           <button
-            className={`drawer-tab ${activeTab === 'edit' ? 'active' : ''}`}
+            className={`drawer-subnav-btn ${activeTab === 'edit' ? 'active' : ''}`}
             onClick={() => setActiveTab('edit')}
           >
             Edit
@@ -98,35 +108,35 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
 
         <div className="drawer-body">
           {loadingContent ? (
-            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>
+            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--fg-subtle)' }}>
               Loading instructions...
             </div>
           ) : activeTab === 'preview' ? (
             <div className="markdown-body">
-              <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: '1.6' }}>
                 {content}
               </pre>
             </div>
           ) : activeTab === 'raw' ? (
-            <pre style={{ fontSize: '12px', background: 'var(--bg-card)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', overflowX: 'auto' }}>
+            <pre style={{ fontSize: '12px', background: 'var(--canvas-subtle)', padding: '16px', borderRadius: '6px', border: '1px solid var(--border-default)', overflowX: 'auto' }}>
               {content}
             </pre>
           ) : activeTab === 'files' ? (
-            <div>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Files located in <code style={{ color: 'var(--accent)' }}>{skill.dirPath}</code>
-              </p>
+            <div className="github-box">
+              <div className="github-box-header">
+                <span>Directory: {skill.dirPath}</span>
+              </div>
               {skill.files.map((f) => (
-                <div key={f.relativePath} className="file-item">
+                <div key={f.relativePath} className="file-row">
                   <div>
-                    <div style={{ fontSize: '13px', fontWeight: 500 }}>{f.relativePath}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontWeight: 500, color: 'var(--accent-fg)' }}>{f.relativePath}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>
                       {f.absolutePath}
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span className="pill pill-scope">{f.role}</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
+                    <span className="badge">{f.role}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--fg-muted)', fontFamily: 'var(--font-mono)' }}>
                       {(f.sizeBytes / 1024).toFixed(1)} KB
                     </span>
                   </div>
@@ -138,12 +148,12 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
               <textarea
                 style={{
                   flex: 1,
-                  minHeight: '380px',
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-main)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '14px',
+                  minHeight: '400px',
+                  background: 'var(--canvas-inset)',
+                  color: 'var(--fg-default)',
+                  border: '1px solid var(--border-default)',
+                  borderRadius: '6px',
+                  padding: '12px',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '13px',
                   lineHeight: '1.5',
@@ -155,7 +165,7 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                 <button
-                  className="tab-btn"
+                  className="btn-default"
                   onClick={() => setActiveTab('preview')}
                 >
                   Cancel
@@ -165,7 +175,7 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
                   onClick={handleSave}
                   disabled={saving}
                 >
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? 'Saving...' : 'Save changes'}
                 </button>
               </div>
             </div>

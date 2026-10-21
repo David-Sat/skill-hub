@@ -9,68 +9,72 @@ interface McpListProps {
 export function McpList({ mcps, onUpdateMcp, updatingMcpId }: McpListProps) {
   if (mcps.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-dim)' }}>
-        <p style={{ fontSize: '18px', marginBottom: '8px' }}>No MCP servers found</p>
-        <p style={{ fontSize: '13px' }}>Check your configuration files in Claude Desktop, Cursor, or Antigravity.</p>
+      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--fg-muted)', border: '1px dashed var(--border-default)', borderRadius: '6px' }}>
+        <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--fg-default)', marginBottom: '4px' }}>No MCP servers found</p>
+        <p style={{ fontSize: '13px' }}>Check your configuration files in Claude Desktop or Antigravity.</p>
       </div>
     );
   }
 
   return (
-    <div className="grid-cards">
+    <div className="github-box">
+      <div className="github-box-header">
+        <span>Model Context Protocol Servers ({mcps.length})</span>
+        <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 400 }}>Sorted by name</span>
+      </div>
+
       {mcps.map((mcp) => {
         const hasUpdate = mcp.updateInfo.hasUpdate && mcp.updateInfo.latestVersion;
         const isUpdating = updatingMcpId === mcp.id;
 
         return (
-          <div key={mcp.id} className="card" style={{ cursor: 'default' }}>
-            <div className="card-header">
-              <div>
-                <div className="card-title">{mcp.name}</div>
-                <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
-                  <span className="pill pill-harness">{mcp.harnessId}</span>
-                  <span className="pill pill-scope">{mcp.transport}</span>
-                  <span className="pill pill-scope">{mcp.packageInfo.type}</span>
-                </div>
+          <div key={mcp.id} className="github-row" style={{ cursor: 'default' }}>
+            <div className="row-main">
+              <div className="row-title-line">
+                <span className="row-title" style={{ textDecoration: 'none' }}>{mcp.name}</span>
+                <span className="badge">{mcp.harnessId}</span>
+                <span className="badge">{mcp.transport}</span>
+                <span className="badge">{mcp.packageInfo.type}</span>
+                {hasUpdate ? (
+                  <span className="badge badge-update">
+                    v{mcp.packageInfo.currentVersion || '?'} to v{mcp.updateInfo.latestVersion}
+                  </span>
+                ) : mcp.packageInfo.currentVersion ? (
+                  <span className="badge" style={{ color: 'var(--success-fg)', borderColor: 'rgba(46, 160, 67, 0.3)' }}>
+                    v{mcp.packageInfo.currentVersion}
+                  </span>
+                ) : null}
               </div>
 
-              {hasUpdate ? (
-                <span className="pill pill-update">
-                  v{mcp.packageInfo.currentVersion || '?'} → v{mcp.updateInfo.latestVersion}
+              <div style={{ background: 'var(--canvas-subtle)', padding: '6px 10px', borderRadius: '4px', border: '1px solid var(--border-muted)', fontSize: '12px', fontFamily: 'var(--font-mono)', overflowX: 'auto', whiteSpace: 'nowrap', marginTop: '4px' }}>
+                {mcp.url ? (
+                  <span>URL: {mcp.url}</span>
+                ) : (
+                  <span>
+                    <strong style={{ color: 'var(--fg-default)' }}>{mcp.command}</strong> {mcp.args.join(' ')}
+                  </span>
+                )}
+              </div>
+
+              <div className="row-meta-line">
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--fg-subtle)' }}>
+                  {mcp.configFilePath}
                 </span>
-              ) : mcp.packageInfo.currentVersion ? (
-                <span className="pill pill-lean">
-                  v{mcp.packageInfo.currentVersion} (latest)
-                </span>
-              ) : null}
+              </div>
             </div>
 
-            <div style={{ background: 'var(--bg-main)', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border)', fontSize: '12px', fontFamily: 'var(--font-mono)', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-              {mcp.url ? (
-                <span>URL: {mcp.url}</span>
-              ) : (
-                <span>
-                  <strong>{mcp.command}</strong> {mcp.args.join(' ')}
-                </span>
-              )}
-            </div>
-
-            <div className="card-footer" style={{ marginTop: 'auto' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '240px', whiteSpace: 'nowrap' }}>
-                {mcp.configFilePath}
-              </span>
-
-              {hasUpdate && mcp.updateInfo.latestVersion && (
+            {hasUpdate && mcp.updateInfo.latestVersion && (
+              <div style={{ flexShrink: 0, alignSelf: 'center' }}>
                 <button
                   className="btn-primary"
-                  style={{ padding: '4px 10px', fontSize: '11px' }}
+                  style={{ fontSize: '12px', padding: '4px 10px' }}
                   disabled={isUpdating}
                   onClick={() => onUpdateMcp(mcp, mcp.updateInfo.latestVersion!)}
                 >
                   {isUpdating ? 'Updating...' : `Update to v${mcp.updateInfo.latestVersion}`}
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         );
       })}

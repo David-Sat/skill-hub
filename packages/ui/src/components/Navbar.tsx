@@ -19,49 +19,57 @@ export function Navbar({
   onCheckUpdates,
   totalSkills,
   totalMcps,
-  detectedHarnesses,
 }: NavbarProps) {
   return (
     <header className="top-navbar">
       <div className="brand">
-        <div className="brand-logo">SH</div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="brand-title">Skill Hub</span>
-            <span className="brand-badge">127.0.0.1:4350</span>
-          </div>
+        <div className="brand-logo">
+          <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
+            <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path>
+          </svg>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ color: 'var(--fg-muted)', fontSize: '14px' }}>David-Sat</span>
+          <span style={{ color: 'var(--fg-subtle)' }}>/</span>
+          <span className="brand-title">skill-hub</span>
+          <span className="brand-badge">local:4350</span>
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-card)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+      <nav className="subnav-tabs">
         <button
-          className={`tab-btn ${activeTab === 'skills' ? 'active' : ''}`}
+          className={`subnav-tab ${activeTab === 'skills' ? 'active' : ''}`}
           onClick={() => onTabChange('skills')}
         >
-          Skills ({totalSkills})
+          <span>Skills</span>
+          <span className="counter-badge">{totalSkills}</span>
         </button>
         <button
-          className={`tab-btn ${activeTab === 'mcps' ? 'active' : ''}`}
+          className={`subnav-tab ${activeTab === 'mcps' ? 'active' : ''}`}
           onClick={() => onTabChange('mcps')}
         >
-          MCP Servers ({totalMcps})
+          <span>MCP Servers</span>
+          <span className="counter-badge">{totalMcps}</span>
         </button>
-      </div>
+      </nav>
 
       <div className="nav-actions">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Filter skills or MCPs..."
-          value={searchQuery}
-          onInput={(e) => onSearchChange((e.target as HTMLInputElement).value)}
-        />
+        <div className="search-box">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Type / to search..."
+            value={searchQuery}
+            onInput={(e) => onSearchChange((e.target as HTMLInputElement).value)}
+          />
+          <span className="search-shortcut">/</span>
+        </div>
         <button
-          className="btn-primary"
+          className="btn-default"
           onClick={onCheckUpdates}
           disabled={checkingUpdates}
         >
-          {checkingUpdates ? 'Checking...' : 'Check Updates'}
+          {checkingUpdates ? 'Checking...' : 'Check updates'}
         </button>
       </div>
     </header>

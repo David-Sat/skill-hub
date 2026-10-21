@@ -1,12 +1,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { execSync } from 'node:child_process';
 import type { HarnessId, HarnessInfo } from '@skill-hub/core';
 
 export interface HarnessDetectionOptions {
   homeDir?: string;
   workspaceDir?: string;
   platform?: NodeJS.Platform;
+}
+
+function isBinaryOnPath(cmd: string): boolean {
+  try {
+    const isWindows = process.platform === 'win32';
+    const checkCmd = isWindows ? `where ${cmd}` : `which ${cmd}`;
+    execSync(checkCmd, { stdio: 'pipe' });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessInfo[] {
@@ -18,7 +30,11 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
 
   // 1. Google Antigravity
   const geminiDir = path.join(home, '.gemini');
-  const antigravityDetected = fs.existsSync(geminiDir);
+  const antigravityDetected =
+    fs.existsSync(path.join(geminiDir, 'antigravity')) ||
+    fs.existsSync(path.join(geminiDir, 'config')) ||
+    isBinaryOnPath('agy');
+
   results.push({
     id: 'antigravity',
     name: 'Google Antigravity',
@@ -34,17 +50,22 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
 
   // 2. Claude Code
   const claudeDir = path.join(home, '.claude');
-  const claudeJson = path.join(home, '.claude.json');
-  const claudeCodeDetected = fs.existsSync(claudeDir) || fs.existsSync(claudeJson);
+  const claudeLocalBin = path.join(home, '.local', 'bin', 'claude');
+  const claudeCodeDetected =
+    isBinaryOnPath('claude') ||
+    fs.existsSync(claudeLocalBin) ||
+    fs.existsSync(path.join(claudeDir, 'history.jsonl')) ||
+    fs.existsSync(path.join(home, '.claude.json'));
+
   results.push({
     id: 'claude-code',
     name: 'Claude Code',
     detected: claudeCodeDetected,
     paths: {
-      config: fs.existsSync(claudeJson) ? claudeJson : claudeDir,
+      config: fs.existsSync(path.join(home, '.claude.json')) ? path.join(home, '.claude.json') : claudeDir,
       skills: path.join(claudeDir, 'skills'),
       plugins: path.join(claudeDir, 'plugins'),
-      mcp: fs.existsSync(claudeJson) ? claudeJson : path.join(claudeDir, 'mcp.json'),
+      mcp: fs.existsSync(path.join(home, '.claude.json')) ? path.join(home, '.claude.json') : path.join(claudeDir, 'mcp.json'),
     },
     icon: 'terminal',
   });
@@ -54,15 +75,21 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
   let desktopDetected = false;
   if (platform === 'darwin') {
     desktopConfigPath = path.join(home, 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json');
-    desktopDetected = fs.existsSync(desktopConfigPath) || fs.existsSync('/Applications/Claude.app');
+    desktopDetected =
+      fs.existsSync('/Applications/Claude.app') ||
+      fs.existsSync(path.join(home, 'Applications', 'Claude.app'));
   } else if (platform === 'win32') {
     const appData = process.env.APPDATA || path.join(home, 'AppData', 'Roaming');
+    const localAppData = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
     desktopConfigPath = path.join(appData, 'Claude', 'claude_desktop_config.json');
-    desktopDetected = fs.existsSync(desktopConfigPath);
+    desktopDetected =
+      fs.existsSync(path.join(localAppData, 'Programs', 'Claude', 'Claude.exe')) ||
+      fs.existsSync(path.join(appData, 'Claude'));
   } else {
     desktopConfigPath = path.join(home, '.config', 'Claude', 'claude_desktop_config.json');
-    desktopDetected = fs.existsSync(desktopConfigPath);
+    desktopDetected = isBinaryOnPath('claude-desktop') || fs.existsSync(desktopConfigPath);
   }
+
   results.push({
     id: 'claude-desktop',
     name: 'Claude Desktop',
@@ -76,10 +103,21 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
 
   // 4. Cursor
   const cursorGlobal = path.join(home, '.cursor');
-  let cursorDetected = fs.existsSync(cursorGlobal);
-  if (!cursorDetected && platform === 'darwin') {
-    cursorDetected = fs.existsSync('/Applications/Cursor.app');
+  let cursorDetected = false;
+  if (platform === 'darwin') {
+    cursorDetected =
+      fs.existsSync('/Applications/Cursor.app') ||
+      fs.existsSync(path.join(home, 'Applications', 'Cursor.app')) ||
+      isBinaryOnPath('cursor');
+  } else if (platform === 'win32') {
+    const localAppData = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
+    cursorDetected =
+      fs.existsSync(path.join(localAppData, 'Programs', 'cursor', 'Cursor.exe')) ||
+      isBinaryOnPath('cursor');
+  } else {
+    cursorDetected = isBinaryOnPath('cursor');
   }
+
   results.push({
     id: 'cursor',
     name: 'Cursor',
@@ -94,10 +132,21 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
 
   // 5. Windsurf
   const windsurfGlobal = path.join(home, '.codeium', 'windsurf');
-  let windsurfDetected = fs.existsSync(windsurfGlobal);
-  if (!windsurfDetected && platform === 'darwin') {
-    windsurfDetected = fs.existsSync('/Applications/Windsurf.app');
+  let windsurfDetected = false;
+  if (platform === 'darwin') {
+    windsurfDetected =
+      fs.existsSync('/Applications/Windsurf.app') ||
+      fs.existsSync(path.join(home, 'Applications', 'Windsurf.app')) ||
+      isBinaryOnPath('windsurf');
+  } else if (platform === 'win32') {
+    const localAppData = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
+    windsurfDetected =
+      fs.existsSync(path.join(localAppData, 'Programs', 'Windsurf', 'Windsurf.exe')) ||
+      isBinaryOnPath('windsurf');
+  } else {
+    windsurfDetected = isBinaryOnPath('windsurf');
   }
+
   results.push({
     id: 'windsurf',
     name: 'Windsurf',
@@ -110,6 +159,20 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
     icon: 'wind',
   });
 
+  // Check VS Code extension directory for Cline and Roo Code
+  const vscodeExts = path.join(home, '.vscode', 'extensions');
+  let hasClineExtension = false;
+  let hasRooExtension = false;
+  if (fs.existsSync(vscodeExts)) {
+    try {
+      const exts = fs.readdirSync(vscodeExts);
+      hasClineExtension = exts.some((e) => e.startsWith('saoudrizwan.claude-dev'));
+      hasRooExtension = exts.some((e) => e.startsWith('rooveterinaryinc.roo-cline'));
+    } catch {
+      // ignore
+    }
+  }
+
   // 6. Cline
   let vscodeGlobal = '';
   if (platform === 'darwin') {
@@ -121,7 +184,8 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
   }
 
   const clineDir = path.join(vscodeGlobal, 'saoudrizwan.claude-dev');
-  const clineDetected = fs.existsSync(clineDir);
+  const clineDetected = hasClineExtension;
+
   results.push({
     id: 'cline',
     name: 'Cline',
@@ -135,7 +199,8 @@ export function detectHarnesses(options: HarnessDetectionOptions = {}): HarnessI
 
   // 7. Roo Code
   const rooDir = path.join(vscodeGlobal, 'rooveterinaryinc.roo-cline');
-  const rooDetected = fs.existsSync(rooDir);
+  const rooDetected = hasRooExtension;
+
   results.push({
     id: 'roo-code',
     name: 'Roo Code',

@@ -37,128 +37,140 @@ export function Sidebar({
   activeTab,
   updatesCount,
 }: SidebarProps) {
-  const detectedHarnesses = harnesses.filter((h) => h.detected);
+  // Only display harnesses that are actually installed on the system
+  const installedHarnesses = harnesses.filter((h) => h.detected);
+
+  const toggleHarness = (id: HarnessId) => {
+    onSelectHarness(selectedHarness === id ? 'all' : id);
+  };
+
+  const toggleBundle = (b: string) => {
+    onSelectBundle(selectedBundle === b ? 'all' : b);
+  };
+
+  const toggleScope = (sc: 'global' | 'workspace' | 'builtin') => {
+    onSelectScope(selectedScope === sc ? 'all' : sc);
+  };
+
+  const toggleTier = (t: TokenTier) => {
+    onSelectTier(selectedTier === t ? 'all' : t);
+  };
 
   return (
     <aside className="sidebar">
-      <div>
+      <div className="sidebar-section">
         <div className="sidebar-section-title">Harness</div>
-        <div className="filter-list">
-          <button
-            className={`filter-item ${selectedHarness === 'all' ? 'active' : ''}`}
-            onClick={() => onSelectHarness('all')}
-          >
-            <span>All Harnesses</span>
-          </button>
-          {detectedHarnesses.map((h) => {
-            const count =
-              activeTab === 'skills'
-                ? skillCountsByHarness[h.id] || 0
-                : mcpCountsByHarness[h.id] || 0;
-            return (
-              <button
-                key={h.id}
-                className={`filter-item ${selectedHarness === h.id ? 'active' : ''}`}
-                onClick={() => onSelectHarness(h.id)}
-              >
-                <span>{h.name}</span>
-                <span className="filter-badge">{count}</span>
-              </button>
-            );
-          })}
-        </div>
+        {installedHarnesses.map((h) => {
+          const count =
+            activeTab === 'skills'
+              ? skillCountsByHarness[h.id] || 0
+              : mcpCountsByHarness[h.id] || 0;
+          const isSelected = selectedHarness === h.id;
+
+          return (
+            <button
+              key={h.id}
+              className={`filter-item ${isSelected ? 'active' : ''}`}
+              onClick={() => toggleHarness(h.id)}
+            >
+              <span>{h.name}</span>
+              <span className="filter-counter">{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {activeTab === 'skills' && (
         <>
-          <div>
-            <div className="sidebar-section-title">Bundle / Pack</div>
-            <div className="filter-list">
-              <button
-                className={`filter-item ${selectedBundle === 'all' ? 'active' : ''}`}
-                onClick={() => onSelectBundle('all')}
-              >
-                <span>All Bundles</span>
-              </button>
-              {bundles.map((b) => (
-                <button
-                  key={b}
-                  className={`filter-item ${selectedBundle === b ? 'active' : ''}`}
-                  onClick={() => onSelectBundle(b)}
-                >
-                  <span style={{ textTransform: 'capitalize' }}>{b.replace(/-/g, ' ')}</span>
-                </button>
-              ))}
+          {bundles.length > 0 && (
+            <div className="sidebar-section">
+              <div className="sidebar-section-title">Bundle</div>
+              {bundles.map((b) => {
+                const isSelected = selectedBundle === b;
+                return (
+                  <button
+                    key={b}
+                    className={`filter-item ${isSelected ? 'active' : ''}`}
+                    onClick={() => toggleBundle(b)}
+                  >
+                    <span style={{ textTransform: 'capitalize' }}>
+                      {b.replace(/-/g, ' ')}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
-          </div>
+          )}
 
-          <div>
+          <div className="sidebar-section">
             <div className="sidebar-section-title">Scope</div>
-            <div className="filter-list">
-              {(['all', 'global', 'workspace', 'builtin'] as const).map((sc) => (
+            {(['global', 'workspace', 'builtin'] as const).map((sc) => {
+              const isSelected = selectedScope === sc;
+              return (
                 <button
                   key={sc}
-                  className={`filter-item ${selectedScope === sc ? 'active' : ''}`}
-                  onClick={() => onSelectScope(sc)}
+                  className={`filter-item ${isSelected ? 'active' : ''}`}
+                  onClick={() => toggleScope(sc)}
                 >
                   <span style={{ textTransform: 'capitalize' }}>{sc}</span>
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          <div>
+          <div className="sidebar-section">
             <div className="sidebar-section-title">Context Weight</div>
-            <div className="filter-list">
-              <button
-                className={`filter-item ${selectedTier === 'all' ? 'active' : ''}`}
-                onClick={() => onSelectTier('all')}
-              >
-                <span>All Weights</span>
-              </button>
-              <button
-                className={`filter-item ${selectedTier === 'lean' ? 'active' : ''}`}
-                onClick={() => onSelectTier('lean')}
-              >
-                <span>Lean (&lt; 1,000)</span>
-              </button>
-              <button
-                className={`filter-item ${selectedTier === 'moderate' ? 'active' : ''}`}
-                onClick={() => onSelectTier('moderate')}
-              >
-                <span>Moderate (1k - 4k)</span>
-              </button>
-              <button
-                className={`filter-item ${selectedTier === 'heavy' ? 'active' : ''}`}
-                onClick={() => onSelectTier('heavy')}
-              >
-                <span>Heavy (&gt; 4,000)</span>
-              </button>
-            </div>
+            <button
+              className={`filter-item ${selectedTier === 'lean' ? 'active' : ''}`}
+              onClick={() => toggleTier('lean')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="status-dot lean"></span>
+                <span>Lean (&lt; 1k)</span>
+              </div>
+            </button>
+            <button
+              className={`filter-item ${selectedTier === 'moderate' ? 'active' : ''}`}
+              onClick={() => toggleTier('moderate')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="status-dot moderate"></span>
+                <span>Moderate (1k–4k)</span>
+              </div>
+            </button>
+            <button
+              className={`filter-item ${selectedTier === 'heavy' ? 'active' : ''}`}
+              onClick={() => toggleTier('heavy')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="status-dot heavy"></span>
+                <span>Heavy (&gt; 4k)</span>
+              </div>
+            </button>
           </div>
         </>
       )}
 
-      <div>
-        <div className="sidebar-section-title">Updates</div>
-        <div className="filter-list">
-          <button
-            className={`filter-item ${showUpdatesOnly ? 'active' : ''}`}
-            onClick={() => onToggleUpdatesOnly(!showUpdatesOnly)}
-          >
-            <span>Updates Available</span>
+      <div className="sidebar-section">
+        <div className="sidebar-section-title">Maintenance</div>
+        <button
+          className={`filter-item ${showUpdatesOnly ? 'active' : ''}`}
+          onClick={() => onToggleUpdatesOnly(!showUpdatesOnly)}
+        >
+          <span>Updates available</span>
+          {updatesCount > 0 && (
             <span
-              className="filter-badge"
+              className="filter-counter"
               style={{
-                background: updatesCount > 0 ? 'var(--amber-bg)' : undefined,
-                color: updatesCount > 0 ? 'var(--amber)' : undefined,
-                fontWeight: updatesCount > 0 ? 'bold' : 'normal',
+                background: 'var(--attention-subtle)',
+                color: 'var(--attention-fg)',
+                fontWeight: 600,
               }}
             >
               {updatesCount}
             </span>
-          </button>
-        </div>
+          )}
+        </button>
       </div>
     </aside>
   );
