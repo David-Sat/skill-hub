@@ -23,15 +23,13 @@ export function Navbar({
   return (
     <header className="top-navbar">
       <div className="brand">
-        <div className="brand-logo">
-          <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
-            <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path>
+        <div className="brand-logo" title="Skill Hub">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM4.22 5.47a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06L5.28 11.03a.75.75 0 0 1-1.06-1.06L5.94 8.25 4.22 6.53a.75.75 0 0 1 0-1.06Zm4.53 4.28h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1 0-1.5Z"/>
           </svg>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ color: 'var(--fg-muted)', fontSize: '14px' }}>David-Sat</span>
-          <span style={{ color: 'var(--fg-subtle)' }}>/</span>
-          <span className="brand-title">skill-hub</span>
+          <span className="brand-title">Skill Hub</span>
           <span className="brand-badge">local:4350</span>
         </div>
       </div>

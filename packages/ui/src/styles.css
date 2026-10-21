@@ -35,13 +35,15 @@
   padding: 0;
 }
 
-body {
+html, body {
   background-color: var(--canvas-default);
   color: var(--fg-default);
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  height: 100%;
+  overflow: hidden;
 }
 
 code, pre {
@@ -52,6 +54,8 @@ code, pre {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
+  width: 100vw;
   overflow: hidden;
 }
 
@@ -244,6 +248,8 @@ code, pre {
 .layout-body {
   display: flex;
   flex: 1;
+  min-height: 0;
+  height: calc(100vh - 56px);
   overflow: hidden;
 }
 
@@ -257,6 +263,8 @@ code, pre {
   padding: 16px 12px;
   gap: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
   flex-shrink: 0;
 }
 
@@ -318,9 +326,12 @@ code, pre {
 /* Main Area */
 .main-content {
   flex: 1;
+  min-height: 0;
+  height: 100%;
   background: var(--canvas-default);
   padding: 20px 24px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 12px;
