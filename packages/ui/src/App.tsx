@@ -151,13 +151,17 @@ export function App() {
     });
   }, [data, selectedHarness, selectedScope, selectedBundle, selectedTier, showUpdatesOnly, searchQuery]);
 
-  const bundles = useMemo(() => {
-    if (!data) return [];
-    const set = new Set<string>();
+  const { bundles, skillCountsByBundle } = useMemo(() => {
+    if (!data) return { bundles: [], skillCountsByBundle: {} };
+    const counts: Record<string, number> = {};
     for (const s of data.skills) {
-      if (s.bundle) set.add(s.bundle);
+      if (s.bundle) {
+        counts[s.bundle] = (counts[s.bundle] || 0) + 1;
+      }
     }
-    return Array.from(set).sort();
+    // Sort bundles descending by count
+    const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    return { bundles: sorted, skillCountsByBundle: counts };
   }, [data]);
 
   // Filter MCPs
@@ -221,6 +225,7 @@ export function App() {
           selectedBundle={selectedBundle}
           onSelectBundle={setSelectedBundle}
           bundles={bundles}
+          skillCountsByBundle={skillCountsByBundle}
           selectedTier={selectedTier}
           onSelectTier={setSelectedTier}
           showUpdatesOnly={showUpdatesOnly}

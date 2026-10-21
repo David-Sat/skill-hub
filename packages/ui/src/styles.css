@@ -75,7 +75,7 @@ code, pre {
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .brand-logo {
@@ -90,14 +90,21 @@ code, pre {
   font-weight: 700;
   font-size: 12px;
   color: var(--fg-default);
-  font-family: var(--font-mono);
-  letter-spacing: -0.05em;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .brand-title {
   font-size: 14px;
   font-weight: 600;
   color: var(--fg-default);
+  line-height: 1;
+  display: inline-block;
 }
 
 .brand-badge {
@@ -105,9 +112,12 @@ code, pre {
   font-family: var(--font-mono);
   background: var(--btn-bg);
   color: var(--fg-muted);
-  padding: 1px 7px;
+  padding: 2px 7px;
   border-radius: 20px;
   border: 1px solid var(--border-default);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Nav Tabs */
@@ -323,18 +333,33 @@ code, pre {
   border-radius: 20px;
 }
 
+.filter-more-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-fg);
+  font-size: 12px;
+  padding: 4px 8px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.1s ease;
+}
+
+.filter-more-btn:hover {
+  text-decoration: underline;
+}
+
 /* Main Area */
 .main-content {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   height: 100%;
+  max-height: 100%;
   background: var(--canvas-default);
   padding: 20px 24px;
   overflow-y: auto;
   overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: block;
 }
 
 .content-header {
@@ -345,6 +370,7 @@ code, pre {
   border-bottom: 1px solid var(--border-default);
   font-size: 13px;
   color: var(--fg-muted);
+  margin-bottom: 16px;
 }
 
 /* GitHub Box List */
@@ -352,7 +378,7 @@ code, pre {
   border: 1px solid var(--border-default);
   border-radius: 6px;
   background: var(--canvas-default);
-  overflow: hidden;
+  margin-bottom: 32px;
 }
 
 .github-box-header {

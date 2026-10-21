@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import type { HarnessId, HarnessInfo, TokenTier } from '@skill-hub/core';
 
 interface SidebarProps {
@@ -9,6 +10,7 @@ interface SidebarProps {
   selectedBundle: string;
   onSelectBundle: (bundle: string) => void;
   bundles: string[];
+  skillCountsByBundle: Record<string, number>;
   selectedTier: 'all' | TokenTier;
   onSelectTier: (tier: 'all' | TokenTier) => void;
   showUpdatesOnly: boolean;
@@ -28,6 +30,7 @@ export function Sidebar({
   selectedBundle,
   onSelectBundle,
   bundles,
+  skillCountsByBundle,
   selectedTier,
   onSelectTier,
   showUpdatesOnly,
@@ -37,6 +40,8 @@ export function Sidebar({
   activeTab,
   updatesCount,
 }: SidebarProps) {
+  const [bundlesExpanded, setBundlesExpanded] = useState<boolean>(false);
+
   // Only display harnesses that are actually installed on the system
   const installedHarnesses = harnesses.filter((h) => h.detected);
 
@@ -55,6 +60,15 @@ export function Sidebar({
   const toggleTier = (t: TokenTier) => {
     onSelectTier(selectedTier === t ? 'all' : t);
   };
+
+  const BUNDLE_LIMIT = 5;
+  const isSelectedBeyondLimit =
+    selectedBundle !== 'all' &&
+    bundles.findIndex((b) => b === selectedBundle) >= BUNDLE_LIMIT;
+
+  const shouldShowAll = bundlesExpanded || isSelectedBeyondLimit;
+  const visibleBundles = shouldShowAll ? bundles : bundles.slice(0, BUNDLE_LIMIT);
+  const remainingCount = Math.max(0, bundles.length - BUNDLE_LIMIT);
 
   return (
     <aside className="sidebar">
@@ -85,8 +99,9 @@ export function Sidebar({
           {bundles.length > 0 && (
             <div className="sidebar-section">
               <div className="sidebar-section-title">Bundle</div>
-              {bundles.map((b) => {
+              {visibleBundles.map((b) => {
                 const isSelected = selectedBundle === b;
+                const count = skillCountsByBundle[b] || 0;
                 return (
                   <button
                     key={b}
@@ -96,9 +111,19 @@ export function Sidebar({
                     <span style={{ textTransform: 'capitalize' }}>
                       {b.replace(/-/g, ' ')}
                     </span>
+                    <span className="filter-counter">{count}</span>
                   </button>
                 );
               })}
+
+              {bundles.length > BUNDLE_LIMIT && (
+                <button
+                  className="filter-more-btn"
+                  onClick={() => setBundlesExpanded(!bundlesExpanded)}
+                >
+                  {bundlesExpanded ? 'Show fewer' : `+ Show ${remainingCount} more...`}
+                </button>
+              )}
             </div>
           )}
 
