@@ -129,17 +129,19 @@ code, pre {
 
 .subnav-tab {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: var(--fg-muted);
   font-size: 14px;
   font-weight: 500;
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.15s ease;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  line-height: 20px;
+  height: 32px;
 }
 
 .subnav-tab:hover {
@@ -149,9 +151,9 @@ code, pre {
 
 .subnav-tab.active {
   color: var(--fg-default);
-  font-weight: 600;
+  font-weight: 500;
   background: var(--btn-bg);
-  border: 1px solid var(--border-default);
+  border-color: var(--border-default);
 }
 
 .counter-badge {
@@ -425,20 +427,96 @@ code, pre {
 }
 
 .github-select {
-  background: var(--canvas-default);
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--canvas-inset);
   color: var(--fg-default);
   border: 1px solid var(--border-default);
   border-radius: 6px;
-  padding: 3px 8px;
+  padding: 4px 26px 4px 10px;
   font-size: 12px;
-  font-family: var(--font-sans);
+  font-weight: 500;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='%23848d97'%3E%3Cpath d='m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .github-select:focus {
   border-color: var(--accent-emphasis);
+}
+
+.primer-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--canvas-inset);
+  color: var(--fg-default);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 5px 28px 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='%23848d97'%3E%3Cpath d='m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.primer-select:hover {
+  background-color: var(--canvas-subtle);
+  border-color: var(--fg-muted);
+}
+
+.primer-select:focus {
+  border-color: var(--accent-fg);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.primer-input {
+  background-color: var(--canvas-inset);
+  color: var(--fg-default);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.primer-input:focus {
+  border-color: var(--accent-fg);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.sort-pill {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--fg-muted);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.12s ease;
+}
+
+.sort-pill:hover {
+  background: var(--canvas-subtle);
+  color: var(--fg-default);
+}
+
+.sort-pill.active {
+  background: var(--canvas-inset);
+  border-color: var(--border-default);
+  color: var(--accent-fg);
+  font-weight: 600;
 }
 
 .github-row {

@@ -21,18 +21,39 @@ export function SkillList({ skills, onSelectSkill, sortBy, onSortChange }: Skill
     <div className="github-box">
       <div className="github-box-header">
         <span>Skills ({skills.length})</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 400 }}>Sort by:</span>
-          <select
-            className="github-select"
-            value={sortBy}
-            onChange={(e) => onSortChange((e.target as HTMLSelectElement).value as any)}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ fontSize: '11px', color: 'var(--fg-subtle)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600, marginRight: '4px' }}>Sort:</span>
+          <button
+            type="button"
+            className={`sort-pill ${sortBy === 'name' ? 'active' : ''}`}
+            onClick={() => onSortChange('name')}
+            title="Sort alphabetically by skill name"
           >
-            <option value="name">Name (A-Z)</option>
-            <option value="tokens-desc">Tokens (Highest first)</option>
-            <option value="tokens-asc">Tokens (Lowest first)</option>
-            <option value="files-desc">Files count</option>
-          </select>
+            <span>Name</span>
+            {sortBy === 'name' && <span style={{ fontSize: '10px' }}>↑</span>}
+          </button>
+          <button
+            type="button"
+            className={`sort-pill ${sortBy.startsWith('tokens') ? 'active' : ''}`}
+            onClick={() => onSortChange(sortBy === 'tokens-desc' ? 'tokens-asc' : 'tokens-desc')}
+            title="Sort by estimated context tokens"
+          >
+            <span>Tokens</span>
+            {sortBy === 'tokens-desc' ? (
+              <span style={{ fontSize: '10px' }}>↓</span>
+            ) : sortBy === 'tokens-asc' ? (
+              <span style={{ fontSize: '10px' }}>↑</span>
+            ) : null}
+          </button>
+          <button
+            type="button"
+            className={`sort-pill ${sortBy === 'files-desc' ? 'active' : ''}`}
+            onClick={() => onSortChange('files-desc')}
+            title="Sort by bundled file count"
+          >
+            <span>Files</span>
+            {sortBy === 'files-desc' && <span style={{ fontSize: '10px' }}>↓</span>}
+          </button>
         </div>
       </div>
 

@@ -167,43 +167,74 @@ export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProp
             <div className="context-stat-sub">{stats.avgCharsPerDesc} chars per skill</div>
           </div>
         </div>
+
+        {/* Persistent Filter & Format Toolbar (Applies to both Injected Prompt and Description Audit) */}
+        <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 500 }}>Target Format:</span>
+              <select
+                className="primer-select"
+                value={format}
+                onChange={(e) => setFormat((e.target as HTMLSelectElement).value as FormatMode)}
+              >
+                <option value="antigravity">Google Antigravity (&lt;skills&gt; XML)</option>
+                <option value="claude">Claude Code (Markdown list)</option>
+                <option value="raw">Raw Descriptions</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 500 }}>Harness:</span>
+              <select
+                className="primer-select"
+                value={harnessFilter}
+                onChange={(e) => setHarnessFilter((e.target as HTMLSelectElement).value as any)}
+              >
+                <option value="all">All harnesses</option>
+                <option value="antigravity">Google Antigravity</option>
+                <option value="claude-code">Claude Code</option>
+                <option value="claude-desktop">Claude Desktop</option>
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="search-box" style={{ maxWidth: '240px' }}>
+              <input
+                type="text"
+                placeholder="Filter skills..."
+                value={search}
+                onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
+                className="search-input"
+                style={{ padding: '4px 28px 4px 10px', height: '28px', fontSize: '12px' }}
+              />
+              {search ? (
+                <button
+                  className="search-clear-btn"
+                  onClick={() => setSearch('')}
+                  title="Clear filter"
+                  type="button"
+                >
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.751.751 0 0 1 0-1.06Z"></path>
+                  </svg>
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main View Area */}
       {viewMode === 'prompt' ? (
         <div className="context-prompt-box">
           <div className="context-prompt-toolbar">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--fg-muted)' }}>Format:</span>
-                <select
-                  className="filter-select"
-                  value={format}
-                  onChange={(e) => setFormat((e.target as HTMLSelectElement).value as FormatMode)}
-                >
-                  <option value="antigravity">Google Antigravity (&lt;skills&gt; XML)</option>
-                  <option value="claude">Claude Code (Markdown list)</option>
-                  <option value="raw">Raw Descriptions</option>
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--fg-muted)' }}>Harness:</span>
-                <select
-                  className="filter-select"
-                  value={harnessFilter}
-                  onChange={(e) => setHarnessFilter((e.target as HTMLSelectElement).value as any)}
-                >
-                  <option value="all">All harnesses</option>
-                  <option value="google-antigravity">Google Antigravity</option>
-                  <option value="claude-code">Claude Code</option>
-                  <option value="claude-desktop">Claude Desktop</option>
-                </select>
-              </div>
-            </div>
-
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fg-default)' }}>
+              Injected Startup Prompt • {activeSkills.length} active skills
+            </span>
             <span style={{ fontSize: '11px', color: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>
-              {activeSkills.length} skills rendered
+              ~{stats.estTokens.toLocaleString()} tokens • {(stats.totalChars / 1024).toFixed(1)} KB
             </span>
           </div>
 
@@ -215,23 +246,9 @@ export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProp
         <div className="github-box">
           <div className="github-box-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Skill Description Verbosity Audit ({activeSkills.length})</span>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input
-                type="text"
-                placeholder="Filter audit table..."
-                value={search}
-                onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
-                style={{
-                  background: 'var(--canvas-inset)',
-                  border: '1px solid var(--border-default)',
-                  borderRadius: '6px',
-                  color: 'var(--fg-default)',
-                  fontSize: '12px',
-                  padding: '4px 8px',
-                  outline: 'none',
-                }}
-              />
-            </div>
+            <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 400 }}>
+              Flagged if &gt; 100 tokens
+            </span>
           </div>
 
           <table className="context-table">

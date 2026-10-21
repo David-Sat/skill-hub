@@ -33,6 +33,16 @@ export function SkillDrawer({ skill, onClose, onSaveSkill, onDeleteSkill }: Skil
       });
   }, [skill.mainFilePath]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const handleSave = async () => {
     setSaving(true);
     const ok = await onSaveSkill(skill, content);
