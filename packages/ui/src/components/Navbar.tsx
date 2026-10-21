@@ -23,9 +23,7 @@ export function Navbar({
   return (
     <header className="top-navbar">
       <div className="brand">
-        <div className="brand-logo" title="( ಠ_ಠ ) Skill Hub">
-          ( ಠ_ಠ )
-        </div>
+        <span className="brand-kaomoji">( ಠ_ಠ )</span>
         <div className="brand-text">
           <span className="brand-title">Skill Hub</span>
           <span className="brand-badge">local:4350</span>

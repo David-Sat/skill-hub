@@ -78,22 +78,13 @@ code, pre {
   gap: 10px;
 }
 
-.brand-logo {
-  height: 28px;
-  padding: 0 8px;
-  border-radius: 6px;
-  background: var(--canvas-inset);
-  border: 1px solid var(--border-default);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.brand-kaomoji {
   font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--accent-fg);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-default);
   user-select: none;
-  flex-shrink: 0;
-  letter-spacing: -0.5px;
+  line-height: 1;
 }
 
 .brand-text {
@@ -501,13 +492,14 @@ code, pre {
   color: var(--fg-muted);
   font-size: 12px;
   font-weight: 500;
-  padding: 3px 8px;
+  padding: 2px 6px;
+  height: 24px;
   border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  transition: all 0.12s ease;
+  gap: 2px;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 
 .sort-pill:hover {
@@ -519,7 +511,15 @@ code, pre {
   background: var(--canvas-inset);
   border-color: var(--border-default);
   color: var(--accent-fg);
-  font-weight: 600;
+  font-weight: 500;
+}
+
+.sort-arrow {
+  display: inline-block;
+  width: 12px;
+  font-size: 10px;
+  text-align: center;
+  user-select: none;
 }
 
 .github-row {
@@ -965,4 +965,79 @@ code, pre {
 
 .context-table tr:hover td {
   background: rgba(255, 255, 255, 0.02);
+}
+
+/* Formatted Context View Cards */
+.prompt-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.prompt-card {
+  background: var(--canvas-default);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.prompt-card:hover {
+  background: var(--canvas-subtle);
+  border-color: var(--accent-fg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.prompt-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.prompt-card-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--accent-fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prompt-card-text {
+  font-size: 12px;
+  color: var(--fg-default);
+  line-height: 1.5;
+  font-family: var(--font-mono);
+  background: var(--canvas-inset);
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.prompt-tag-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-muted);
+  background: var(--canvas-inset);
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prompt-tag-badge-bottom {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-muted);
+  background: var(--canvas-inset);
+  padding: 6px 14px;
+  border-top: 1px solid var(--border-default);
 }

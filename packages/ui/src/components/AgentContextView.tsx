@@ -4,22 +4,29 @@ import type { SkillItem, HarnessId } from '@skill-hub/core';
 interface AgentContextViewProps {
   skills: SkillItem[];
   onSelectSkill: (skill: SkillItem) => void;
+  format?: 'antigravity' | 'claude' | 'raw';
+  selectedHarness?: 'all' | HarnessId;
+  selectedScope?: 'all' | 'global' | 'workspace' | 'builtin';
 }
 
-type FormatMode = 'antigravity' | 'claude' | 'raw';
-type ViewMode = 'prompt' | 'audit';
+type ViewMode = 'formatted' | 'raw' | 'audit';
 
-export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProps) {
-  const [format, setFormat] = useState<FormatMode>('antigravity');
-  const [viewMode, setViewMode] = useState<ViewMode>('prompt');
-  const [harnessFilter, setHarnessFilter] = useState<'all' | HarnessId>('all');
+export function AgentContextView({
+  skills,
+  onSelectSkill,
+  format = 'antigravity',
+  selectedHarness = 'all',
+  selectedScope = 'all',
+}: AgentContextViewProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>('formatted');
   const [search, setSearch] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
 
-  // Filter skills
+  // Filter skills based on harness, scope, and search query
   const activeSkills = useMemo(() => {
     return skills.filter((s) => {
-      if (harnessFilter !== 'all' && s.harnessId !== harnessFilter) return false;
+      if (selectedHarness !== 'all' && s.harnessId !== selectedHarness) return false;
+      if (selectedScope !== 'all' && s.scope !== selectedScope) return false;
       if (search.trim()) {
         const q = search.toLowerCase();
         const mName = s.name.toLowerCase().includes(q);
@@ -28,7 +35,7 @@ export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProp
       }
       return true;
     });
-  }, [skills, harnessFilter, search]);
+  }, [skills, selectedHarness, selectedScope, search]);
 
   // Generate context injection string based on format
   const generatedContext = useMemo(() => {
@@ -109,19 +116,28 @@ export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProp
               Agent Context & Prompt Injection
             </h1>
             <p style={{ fontSize: '13px', color: 'var(--fg-muted)', marginTop: '4px' }}>
-              Inspect the exact system instructions and skill description block loaded into the AI agent context window at session start.
+              Inspect the exact system prompt and skill description block loaded into the agent context at startup.
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            {/* View Mode Switcher */}
             <div className="btn-group" style={{ display: 'flex', border: '1px solid var(--border-default)', borderRadius: '6px', overflow: 'hidden' }}>
               <button
-                className={`drawer-subnav-btn ${viewMode === 'prompt' ? 'active' : ''}`}
+                className={`drawer-subnav-btn ${viewMode === 'formatted' ? 'active' : ''}`}
                 style={{ padding: '6px 14px', fontSize: '12px' }}
-                onClick={() => setViewMode('prompt')}
+                onClick={() => setViewMode('formatted')}
                 type="button"
               >
-                Injected Prompt
+                Formatted
+              </button>
+              <button
+                className={`drawer-subnav-btn ${viewMode === 'raw' ? 'active' : ''}`}
+                style={{ padding: '6px 14px', fontSize: '12px' }}
+                onClick={() => setViewMode('raw')}
+                type="button"
+              >
+                Raw Prompt
               </button>
               <button
                 className={`drawer-subnav-btn ${viewMode === 'audit' ? 'active' : ''}`}
@@ -133,13 +149,37 @@ export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProp
               </button>
             </div>
 
+            {/* Quick Search */}
+            <div className="search-box" style={{ maxWidth: '200px' }}>
+              <input
+                type="text"
+                placeholder="Filter skills..."
+                value={search}
+                onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
+                className="search-input"
+                style={{ padding: '4px 28px 4px 10px', height: '28px', fontSize: '12px' }}
+              />
+              {search ? (
+                <button
+                  className="search-clear-btn"
+                  onClick={() => setSearch('')}
+                  title="Clear filter"
+                  type="button"
+                >
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.751.751 0 0 1 0-1.06Z"></path>
+                  </svg>
+                </button>
+              ) : null}
+            </div>
+
             <button
               className="btn-default"
               onClick={handleCopy}
               type="button"
               style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              {copied ? 'Copied to clipboard!' : 'Copy prompt'}
+              {copied ? 'Copied!' : 'Copy prompt'}
             </button>
           </div>
         </div>
@@ -167,71 +207,94 @@ export function AgentContextView({ skills, onSelectSkill }: AgentContextViewProp
             <div className="context-stat-sub">{stats.avgCharsPerDesc} chars per skill</div>
           </div>
         </div>
-
-        {/* Persistent Filter & Format Toolbar (Applies to both Injected Prompt and Description Audit) */}
-        <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 500 }}>Target Format:</span>
-              <select
-                className="primer-select"
-                value={format}
-                onChange={(e) => setFormat((e.target as HTMLSelectElement).value as FormatMode)}
-              >
-                <option value="antigravity">Google Antigravity (&lt;skills&gt; XML)</option>
-                <option value="claude">Claude Code (Markdown list)</option>
-                <option value="raw">Raw Descriptions</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 500 }}>Harness:</span>
-              <select
-                className="primer-select"
-                value={harnessFilter}
-                onChange={(e) => setHarnessFilter((e.target as HTMLSelectElement).value as any)}
-              >
-                <option value="all">All harnesses</option>
-                <option value="antigravity">Google Antigravity</option>
-                <option value="claude-code">Claude Code</option>
-                <option value="claude-desktop">Claude Desktop</option>
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div className="search-box" style={{ maxWidth: '240px' }}>
-              <input
-                type="text"
-                placeholder="Filter skills..."
-                value={search}
-                onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
-                className="search-input"
-                style={{ padding: '4px 28px 4px 10px', height: '28px', fontSize: '12px' }}
-              />
-              {search ? (
-                <button
-                  className="search-clear-btn"
-                  onClick={() => setSearch('')}
-                  title="Clear filter"
-                  type="button"
-                >
-                  <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.751.751 0 0 1 0-1.06Z"></path>
-                  </svg>
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Main View Area */}
-      {viewMode === 'prompt' ? (
+      {viewMode === 'formatted' ? (
+        <div className="github-box">
+          <div className="github-box-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>
+              Formatted Context Injection ({activeSkills.length} skills • Format: {format === 'antigravity' ? 'Antigravity XML' : format === 'claude' ? 'Claude Code' : 'Raw'})
+            </span>
+            <span style={{ fontSize: '11px', color: 'var(--fg-muted)', fontWeight: 400 }}>
+              Click any skill card to inspect or edit instructions →
+            </span>
+          </div>
+
+          {format === 'antigravity' && (
+            <div className="prompt-tag-badge">
+              <span>&lt;skills&gt; Preamble</span>
+              <span style={{ color: 'var(--fg-subtle)' }}>System Prompt XML wrapper</span>
+            </div>
+          )}
+
+          <div className="prompt-card-list">
+            {activeSkills.map((skill) => {
+              const descLen = skill.description ? skill.description.length : 0;
+              const descTokens = Math.ceil(descLen / 4);
+
+              return (
+                <div
+                  key={skill.id}
+                  className="prompt-card"
+                  onClick={() => onSelectSkill(skill)}
+                  title="Click to open skill inspector"
+                >
+                  <div className="prompt-card-header">
+                    <div className="prompt-card-title">
+                      <span>{skill.name}</span>
+                      <span className="badge">{skill.scope}</span>
+                      {skill.bundle && skill.bundle !== 'standalone' && (
+                        <span className="badge badge-bundle">{skill.bundle}</span>
+                      )}
+                      <span className="badge">{skill.harnessId}</span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span className="badge" style={{ fontFamily: 'var(--font-mono)' }}>
+                        ~{descTokens} tok
+                      </span>
+                      <span style={{ fontSize: '11px', color: 'var(--accent-fg)' }}>
+                        Inspect →
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="prompt-card-text">
+                    {format === 'antigravity' ? (
+                      <span>
+                        <strong style={{ color: 'var(--fg-default)' }}>- {skill.name}</strong>{' '}
+                        <span style={{ color: 'var(--fg-muted)' }}>({skill.mainFilePath}):</span>{' '}
+                        {skill.description || '(No description provided)'}
+                      </span>
+                    ) : format === 'claude' ? (
+                      <span>
+                        <strong style={{ color: 'var(--fg-default)' }}>- {skill.name}:</strong>{' '}
+                        {skill.description || '(No description provided)'}
+                      </span>
+                    ) : (
+                      <span>
+                        <strong style={{ color: 'var(--fg-default)' }}>{skill.name}:</strong>{' '}
+                        {skill.description || '(No description provided)'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {format === 'antigravity' && (
+            <div className="prompt-tag-badge-bottom">
+              <span>&lt;/skills&gt;</span>
+            </div>
+          )}
+        </div>
+      ) : viewMode === 'raw' ? (
         <div className="context-prompt-box">
           <div className="context-prompt-toolbar">
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fg-default)' }}>
-              Injected Startup Prompt • {activeSkills.length} active skills
+              Raw Injected Prompt Text • {activeSkills.length} active skills
             </span>
             <span style={{ fontSize: '11px', color: 'var(--fg-subtle)', fontFamily: 'var(--font-mono)' }}>
               ~{stats.estTokens.toLocaleString()} tokens • {(stats.totalChars / 1024).toFixed(1)} KB

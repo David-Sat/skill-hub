@@ -15,6 +15,7 @@ export function App() {
 
   // Filters & Navigation
   const [activeTab, setActiveTab] = useState<'skills' | 'mcps' | 'context'>('skills');
+  const [contextFormat, setContextFormat] = useState<'antigravity' | 'claude' | 'raw'>('antigravity');
   const [selectedHarness, setSelectedHarness] = useState<'all' | HarnessId>('all');
   const [selectedScope, setSelectedScope] = useState<'all' | 'global' | 'workspace' | 'builtin'>('all');
   const [selectedBundle, setSelectedBundle] = useState<string>('all');
@@ -275,6 +276,8 @@ export function App() {
           mcpCountsByHarness={mcpCountsByHarness}
           activeTab={activeTab}
           updatesCount={data?.summary.updatesAvailableCount || 0}
+          contextFormat={contextFormat}
+          onSelectContextFormat={setContextFormat}
         />
 
         <main className="main-content">
@@ -299,6 +302,9 @@ export function App() {
             <AgentContextView
               skills={data?.skills || []}
               onSelectSkill={setSelectedSkill}
+              format={contextFormat}
+              selectedHarness={selectedHarness}
+              selectedScope={selectedScope}
             />
           )}
         </main>

@@ -21,7 +21,7 @@ export function SkillList({ skills, onSelectSkill, sortBy, onSortChange }: Skill
     <div className="github-box">
       <div className="github-box-header">
         <span>Skills ({skills.length})</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <span style={{ fontSize: '11px', color: 'var(--fg-subtle)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600, marginRight: '4px' }}>Sort:</span>
           <button
             type="button"
@@ -30,7 +30,7 @@ export function SkillList({ skills, onSelectSkill, sortBy, onSortChange }: Skill
             title="Sort alphabetically by skill name"
           >
             <span>Name</span>
-            {sortBy === 'name' && <span style={{ fontSize: '10px' }}>↑</span>}
+            <span className="sort-arrow">{sortBy === 'name' ? '↑' : ''}</span>
           </button>
           <button
             type="button"
@@ -39,11 +39,9 @@ export function SkillList({ skills, onSelectSkill, sortBy, onSortChange }: Skill
             title="Sort by estimated context tokens"
           >
             <span>Tokens</span>
-            {sortBy === 'tokens-desc' ? (
-              <span style={{ fontSize: '10px' }}>↓</span>
-            ) : sortBy === 'tokens-asc' ? (
-              <span style={{ fontSize: '10px' }}>↑</span>
-            ) : null}
+            <span className="sort-arrow">
+              {sortBy === 'tokens-desc' ? '↓' : sortBy === 'tokens-asc' ? '↑' : ''}
+            </span>
           </button>
           <button
             type="button"
@@ -52,7 +50,7 @@ export function SkillList({ skills, onSelectSkill, sortBy, onSortChange }: Skill
             title="Sort by bundled file count"
           >
             <span>Files</span>
-            {sortBy === 'files-desc' && <span style={{ fontSize: '10px' }}>↓</span>}
+            <span className="sort-arrow">{sortBy === 'files-desc' ? '↓' : ''}</span>
           </button>
         </div>
       </div>
