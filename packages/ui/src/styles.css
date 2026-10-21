@@ -79,18 +79,21 @@ code, pre {
 }
 
 .brand-logo {
-  width: 28px;
   height: 28px;
+  padding: 0 8px;
   border-radius: 6px;
-  background: #21262d;
+  background: var(--canvas-inset);
   border: 1px solid var(--border-default);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 12px;
-  color: var(--fg-default);
+  font-size: 13px;
+  color: var(--accent-fg);
+  user-select: none;
   flex-shrink: 0;
+  letter-spacing: -0.5px;
 }
 
 .brand-text {
