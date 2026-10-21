@@ -32,6 +32,8 @@ export async function startServer(options: ServerOptions = {}): Promise<RunningS
   let uiDistDir = options.uiDistDir;
   if (!uiDistDir) {
     const candidatePaths = [
+      path.resolve(__dirname, './ui'),
+      path.resolve(__dirname, '../ui'),
       path.resolve(__dirname, '../../ui/dist'),
       path.resolve(__dirname, '../ui/dist'),
       path.resolve(process.cwd(), 'packages/ui/dist'),

@@ -1,29 +1,56 @@
 {
   "name": "skill-hub",
   "version": "0.1.0",
-  "description": "Unified Skill & MCP Manager for AI Coding Agents",
+  "description": "( ಠ_ಠ ) Unified Skill & MCP Manager for AI Coding Agents",
   "type": "module",
   "bin": {
     "skill-hub": "./dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --emitDeclarationOnly && node ./build.mjs",
     "dev": "tsc --watch"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.0",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
     "@skill-hub/core": "workspace:*",
     "@skill-hub/mcp": "workspace:*",
     "@skill-hub/scanner": "workspace:*",
     "@skill-hub/server": "workspace:*",
     "@skill-hub/updater": "workspace:*",
-    "commander": "^13.1.0"
-  },
-  "devDependencies": {
     "@types/node": "^22.13.4",
     "typescript": "^5.7.3"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "skills",
+    "mcp",
+    "model-context-protocol",
+    "antigravity",
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "developer-tools"
+  ],
+  "author": "David Satomi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/David-Sat/skill-hub.git"
+  },
+  "homepage": "https://github.com/David-Sat/skill-hub#readme",
+  "bugs": {
+    "url": "https://github.com/David-Sat/skill-hub/issues"
   },
   "engines": {
     "node": ">=20.0.0"
