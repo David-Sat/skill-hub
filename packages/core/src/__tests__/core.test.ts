@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
 import { estimateTokens, classifyFileRole } from '../tokens.js';
 import { parseSkillFrontmatter } from '../frontmatter.js';
+import { deleteSkill } from '../delete.js';
 
 describe('tokens', () => {
   it('estimates zero tokens for empty string', () => {
@@ -66,5 +70,31 @@ Detailed instructions go here.
     const parsed = parseSkillFrontmatter(raw, 'fallback-name');
     expect(parsed.name).toBe('fallback-name');
     expect(parsed.content).toBe(raw);
+  });
+});
+
+describe('deleteSkill', () => {
+  it('prevents deleting builtin skills', async () => {
+    const res = await deleteSkill({
+      mainFilePath: '/fake/path/SKILL.md',
+      scope: 'builtin',
+    });
+    expect(res.success).toBe(false);
+    expect(res.error).toContain('Cannot delete built-in harness skills');
+  });
+
+  it('safely deletes custom skill directory and backs it up', async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'skill-del-test-'));
+    const skillMd = path.join(tempDir, 'SKILL.md');
+    fs.writeFileSync(skillMd, '# Temp Skill\nDescription text', 'utf-8');
+
+    const res = await deleteSkill({
+      mainFilePath: skillMd,
+      dirPath: tempDir,
+      scope: 'global',
+    });
+
+    expect(res.success).toBe(true);
+    expect(fs.existsSync(tempDir)).toBe(false);
   });
 });

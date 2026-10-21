@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
+import { deleteSkill } from '@skill-hub/core';
 import { scanAll } from '@skill-hub/scanner';
 import { checkAllUpdates, updateMcpServerVersion, saveSkillFile } from '@skill-hub/updater';
 
@@ -104,6 +105,26 @@ export async function startServer(options: ServerOptions = {}): Promise<RunningS
         const ok = await saveSkillFile(body.filePath, body.content);
         res.writeHead(ok ? 200 : 500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: ok }));
+        return;
+      }
+
+      // 4b. API: Delete Skill
+      if (pathname === '/api/skill/delete' && req.method === 'POST') {
+        const body = await readJsonBody(req);
+        if (!body.mainFilePath || !body.scope) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Missing mainFilePath or scope' }));
+          return;
+        }
+
+        const result = await deleteSkill({
+          mainFilePath: body.mainFilePath,
+          dirPath: body.dirPath,
+          scope: body.scope,
+        });
+
+        res.writeHead(result.success ? 200 : 400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
         return;
       }
 

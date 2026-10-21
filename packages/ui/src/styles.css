@@ -720,3 +720,168 @@ code, pre {
   align-items: center;
   gap: 10px;
 }
+
+/* Danger Buttons & Delete Confirm */
+.btn-danger {
+  background: var(--btn-bg);
+  color: var(--danger-fg);
+  border: 1px solid rgba(248, 81, 73, 0.4);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-danger:hover {
+  background: var(--danger-emphasis);
+  color: #ffffff;
+  border-color: var(--danger-emphasis);
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger-solid {
+  background: var(--danger-emphasis);
+  color: #ffffff;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-danger-solid:hover {
+  background: #b62324;
+}
+
+.btn-danger-solid:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-confirm-box {
+  margin: 16px 20px 0 20px;
+  padding: 14px 16px;
+  background: rgba(248, 81, 73, 0.08);
+  border: 1px solid rgba(248, 81, 73, 0.35);
+  border-radius: 6px;
+}
+
+/* Agent Context View */
+.context-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 4px 32px 4px;
+}
+
+.context-header-card {
+  background: var(--canvas-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 16px 20px;
+}
+
+.context-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.context-stat-card {
+  background: var(--canvas-default);
+  border: 1px solid var(--border-muted);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+.context-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--fg-muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.context-stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--fg-default);
+  font-family: var(--font-mono);
+}
+
+.context-stat-sub {
+  font-size: 12px;
+  color: var(--fg-subtle);
+  margin-top: 2px;
+}
+
+.context-prompt-box {
+  background: var(--canvas-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.context-prompt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--canvas-inset);
+  border-bottom: 1px solid var(--border-default);
+  font-size: 13px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.context-prompt-code {
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--fg-default);
+  background: var(--canvas-subtle);
+  overflow-x: auto;
+  max-height: 520px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.context-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.context-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  font-size: 12px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--canvas-subtle);
+}
+
+.context-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-muted);
+  vertical-align: top;
+}
+
+.context-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}

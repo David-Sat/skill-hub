@@ -5,15 +5,18 @@ interface SkillDrawerProps {
   skill: SkillItem | null;
   onClose: () => void;
   onSaveSkill: (skill: SkillItem, content: string) => Promise<boolean>;
+  onDeleteSkill: (skill: SkillItem) => Promise<boolean>;
 }
 
-export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
+export function SkillDrawer({ skill, onClose, onSaveSkill, onDeleteSkill }: SkillDrawerProps) {
   if (!skill) return null;
 
   const [activeTab, setActiveTab] = useState<'preview' | 'raw' | 'files' | 'edit'>('preview');
   const [content, setContent] = useState<string>('');
   const [loadingContent, setLoadingContent] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
 
   useEffect(() => {
     setLoadingContent(true);
@@ -36,6 +39,15 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
     setSaving(false);
     if (ok) {
       setActiveTab('preview');
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    const ok = await onDeleteSkill(skill);
+    setDeleting(false);
+    if (ok) {
+      onClose();
     }
   };
 
@@ -63,21 +75,65 @@ export function SkillDrawer({ skill, onClose, onSaveSkill }: SkillDrawerProps) {
               <span>{skill.tokens.charCount.toLocaleString()} chars</span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--fg-muted)',
-              fontSize: '18px',
-              cursor: 'pointer',
-              padding: '4px 8px',
-              borderRadius: '4px',
-            }}
-          >
-            ✕
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {skill.scope !== 'builtin' && (
+              <button
+                className="btn-danger"
+                onClick={() => setConfirmDelete(true)}
+                title="Delete this skill"
+                type="button"
+              >
+                Delete skill
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--fg-muted)',
+                fontSize: '18px',
+                cursor: 'pointer',
+                padding: '4px 8px',
+                borderRadius: '4px',
+              }}
+              title="Close drawer"
+            >
+              ✕
+            </button>
+          </div>
         </div>
+
+        {confirmDelete && (
+          <div className="delete-confirm-box">
+            <div style={{ fontWeight: 600, color: 'var(--danger-fg)', marginBottom: '4px', fontSize: '13px' }}>
+              Delete skill "{skill.name}"?
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--fg-muted)', marginBottom: '12px', lineHeight: '1.4' }}>
+              This will permanently remove this skill from disk at{' '}
+              <code style={{ color: 'var(--accent-fg)' }}>{skill.dirPath || skill.mainFilePath}</code>.
+              A timestamped backup copy is automatically created in <code style={{ color: 'var(--fg-default)' }}>~/.skill-hub/backups/</code>.
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button
+                className="btn-default"
+                onClick={() => setConfirmDelete(false)}
+                disabled={deleting}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-danger-solid"
+                onClick={handleDelete}
+                disabled={deleting}
+                type="button"
+              >
+                {deleting ? 'Deleting...' : 'Confirm delete'}
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="drawer-subnav">
           <button

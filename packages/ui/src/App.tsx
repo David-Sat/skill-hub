@@ -5,6 +5,7 @@ import { Sidebar } from './components/Sidebar.js';
 import { SkillList } from './components/SkillList.js';
 import { McpList } from './components/McpList.js';
 import { SkillDrawer } from './components/SkillDrawer.js';
+import { AgentContextView } from './components/AgentContextView.js';
 
 export function App() {
   const [data, setData] = useState<SkillHubScanResult | null>(null);
@@ -13,7 +14,7 @@ export function App() {
   const [updatingMcpId, setUpdatingMcpId] = useState<string | null>(null);
 
   // Filters & Navigation
-  const [activeTab, setActiveTab] = useState<'skills' | 'mcps'>('skills');
+  const [activeTab, setActiveTab] = useState<'skills' | 'mcps' | 'context'>('skills');
   const [selectedHarness, setSelectedHarness] = useState<'all' | HarnessId>('all');
   const [selectedScope, setSelectedScope] = useState<'all' | 'global' | 'workspace' | 'builtin'>('all');
   const [selectedBundle, setSelectedBundle] = useState<string>('all');
@@ -129,6 +130,32 @@ export function App() {
       }
     } catch (err: any) {
       showToast(`Error saving skill: ${err.message}`, 'error');
+      return false;
+    }
+  };
+
+  const handleDeleteSkill = async (skill: SkillItem): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/skill/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mainFilePath: skill.mainFilePath,
+          dirPath: skill.dirPath,
+          scope: skill.scope,
+        }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        showToast(`Skill "${skill.name}" removed (backup preserved).`, 'success');
+        fetchScan();
+        return true;
+      } else {
+        showToast(`Failed to delete: ${result.error}`, 'error');
+        return false;
+      }
+    } catch (err: any) {
+      showToast(`Error deleting skill: ${err.message}`, 'error');
       return false;
     }
   };
@@ -252,7 +279,7 @@ export function App() {
 
         <main className="main-content">
           {loading ? (
-            <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-dim)' }}>
+            <div style={{ padding: '60px', textAlign: 'center', color: 'var(--fg-muted)' }}>
               Scanning agent harnesses and configurations...
             </div>
           ) : activeTab === 'skills' ? (
@@ -262,11 +289,16 @@ export function App() {
               sortBy={sortBy}
               onSortChange={setSortBy}
             />
-          ) : (
+          ) : activeTab === 'mcps' ? (
             <McpList
               mcps={filteredMcps}
               onUpdateMcp={handleUpdateMcp}
               updatingMcpId={updatingMcpId}
+            />
+          ) : (
+            <AgentContextView
+              skills={data?.skills || []}
+              onSelectSkill={setSelectedSkill}
             />
           )}
         </main>
@@ -276,6 +308,7 @@ export function App() {
         skill={selectedSkill}
         onClose={() => setSelectedSkill(null)}
         onSaveSkill={handleSaveSkill}
+        onDeleteSkill={handleDeleteSkill}
       />
 
       {toast && (

@@ -1,6 +1,6 @@
 interface NavbarProps {
-  activeTab: 'skills' | 'mcps';
-  onTabChange: (tab: 'skills' | 'mcps') => void;
+  activeTab: 'skills' | 'mcps' | 'context';
+  onTabChange: (tab: 'skills' | 'mcps' | 'context') => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   checkingUpdates: boolean;
@@ -48,6 +48,13 @@ export function Navbar({
         >
           <span>MCP Servers</span>
           <span className="counter-badge">{totalMcps}</span>
+        </button>
+        <button
+          className={`subnav-tab ${activeTab === 'context' ? 'active' : ''}`}
+          onClick={() => onTabChange('context')}
+        >
+          <span>Agent Context</span>
+          <span className="counter-badge">Prompt</span>
         </button>
       </nav>
 
