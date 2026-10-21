@@ -52,7 +52,13 @@ export const PLUGIN_MANIFEST = {
   keywords: ['skills', 'mcp', 'agent-plugin', 'token-profiler', 'developer-tools'],
 };
 
-export function getMcpConfig() {
+export function getMcpConfig(useGlobalCmd: boolean = true) {
+  if (useGlobalCmd) {
+    return {
+      command: 'skill-hub',
+      args: ['mcp'],
+    };
+  }
   return {
     command: 'npx',
     args: ['-y', 'skill-hub', 'mcp'],
