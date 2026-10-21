@@ -1,0 +1,31 @@
+{
+  "name": "skill-hub",
+  "version": "0.1.0",
+  "description": "Unified Skill & MCP Manager for AI Coding Agents",
+  "type": "module",
+  "bin": {
+    "skill-hub": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "@skill-hub/core": "workspace:*",
+    "@skill-hub/mcp": "workspace:*",
+    "@skill-hub/scanner": "workspace:*",
+    "@skill-hub/server": "workspace:*",
+    "@skill-hub/updater": "workspace:*",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
