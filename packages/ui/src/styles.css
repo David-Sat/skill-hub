@@ -208,6 +208,26 @@ code, pre {
   pointer-events: none;
 }
 
+.search-clear-btn {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.1s ease;
+}
+
+.search-clear-btn:hover {
+  color: var(--fg-default);
+  background: var(--btn-bg);
+}
+
 .btn-default {
   background: var(--btn-bg);
   color: var(--fg-default);
@@ -281,14 +301,25 @@ code, pre {
 .sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  border-top: 1px solid var(--border-muted);
+  padding-top: 12px;
+  margin-top: 2px;
+}
+
+.sidebar-section:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 .sidebar-section-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--fg-muted);
-  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-subtle);
+  padding: 4px 8px 6px;
   margin-bottom: 2px;
 }
 
@@ -391,6 +422,23 @@ code, pre {
   font-size: 13px;
   font-weight: 600;
   color: var(--fg-default);
+}
+
+.github-select {
+  background: var(--canvas-default);
+  color: var(--fg-default);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.github-select:focus {
+  border-color: var(--accent-emphasis);
 }
 
 .github-row {

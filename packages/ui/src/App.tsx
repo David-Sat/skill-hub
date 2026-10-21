@@ -20,6 +20,7 @@ export function App() {
   const [selectedTier, setSelectedTier] = useState<'all' | TokenTier>('all');
   const [showUpdatesOnly, setShowUpdatesOnly] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'name' | 'tokens-desc' | 'tokens-asc' | 'files-desc'>('name');
 
   // Selected Detail
   const [selectedSkill, setSelectedSkill] = useState<SkillItem | null>(null);
@@ -132,10 +133,10 @@ export function App() {
     }
   };
 
-  // Filter skills
+  // Filter and sort skills
   const filteredSkills = useMemo(() => {
     if (!data) return [];
-    return data.skills.filter((s) => {
+    const list = data.skills.filter((s) => {
       if (selectedHarness !== 'all' && s.harnessId !== selectedHarness) return false;
       if (selectedScope !== 'all' && s.scope !== selectedScope) return false;
       if (selectedBundle !== 'all' && s.bundle !== selectedBundle) return false;
@@ -149,7 +150,20 @@ export function App() {
       }
       return true;
     });
-  }, [data, selectedHarness, selectedScope, selectedBundle, selectedTier, showUpdatesOnly, searchQuery]);
+
+    return list.sort((a, b) => {
+      if (sortBy === 'tokens-desc') {
+        return b.tokens.estimatedTokens - a.tokens.estimatedTokens;
+      }
+      if (sortBy === 'tokens-asc') {
+        return a.tokens.estimatedTokens - b.tokens.estimatedTokens;
+      }
+      if (sortBy === 'files-desc') {
+        return b.files.length - a.files.length;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [data, selectedHarness, selectedScope, selectedBundle, selectedTier, showUpdatesOnly, searchQuery, sortBy]);
 
   const { bundles, skillCountsByBundle } = useMemo(() => {
     if (!data) return { bundles: [], skillCountsByBundle: {} };
@@ -245,6 +259,8 @@ export function App() {
             <SkillList
               skills={filteredSkills}
               onSelectSkill={setSelectedSkill}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
             />
           ) : (
             <McpList

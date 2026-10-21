@@ -3,9 +3,11 @@ import type { SkillItem } from '@skill-hub/core';
 interface SkillListProps {
   skills: SkillItem[];
   onSelectSkill: (skill: SkillItem) => void;
+  sortBy: 'name' | 'tokens-desc' | 'tokens-asc' | 'files-desc';
+  onSortChange: (sort: 'name' | 'tokens-desc' | 'tokens-asc' | 'files-desc') => void;
 }
 
-export function SkillList({ skills, onSelectSkill }: SkillListProps) {
+export function SkillList({ skills, onSelectSkill, sortBy, onSortChange }: SkillListProps) {
   if (skills.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--fg-muted)', border: '1px dashed var(--border-default)', borderRadius: '6px' }}>
@@ -19,7 +21,19 @@ export function SkillList({ skills, onSelectSkill }: SkillListProps) {
     <div className="github-box">
       <div className="github-box-header">
         <span>Skills ({skills.length})</span>
-        <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 400 }}>Sorted by name</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '12px', color: 'var(--fg-muted)', fontWeight: 400 }}>Sort by:</span>
+          <select
+            className="github-select"
+            value={sortBy}
+            onChange={(e) => onSortChange((e.target as HTMLSelectElement).value as any)}
+          >
+            <option value="name">Name (A-Z)</option>
+            <option value="tokens-desc">Tokens (Highest first)</option>
+            <option value="tokens-asc">Tokens (Lowest first)</option>
+            <option value="files-desc">Files count</option>
+          </select>
+        </div>
       </div>
 
       {skills.map((skill) => {
