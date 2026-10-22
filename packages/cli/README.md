@@ -26,50 +26,12 @@ Skill Hub scans all installed coding agent harnesses across your machine—showi
 
 ## Core Capabilities
 
-### 1. Cross-Harness Matrix
-Automatically detects and aggregates skills and MCPs across only installed harnesses:
-* **Google Antigravity**: `~/.gemini/` (`config/plugins/`, `config/skills/`, builtin skills)
-* **Claude Code**: `~/.claude/` (skills, plugins, `.claude.json`)
-* **Claude Desktop**: macOS `~/Library/Application Support/Claude/claude_desktop_config.json`, Windows `%APPDATA%/Claude`, Linux `~/.config/Claude`
-* **Cursor**: `~/.cursor/mcp.json`, project `.cursor/mcp.json`, `.cursor/rules/*.mdc`
-* **Windsurf**: `~/.codeium/windsurf/mcp_config.json`, `.windsurfrules`
-* **Cline & Roo Code**: VS Code `globalStorage` settings and `.clinerules`
-
-### 2. Agent Startup Context & Prompt Profiler
-See exactly what the AI agent sees when a new session starts:
-* **Live Injected Prompt**: Renders the complete system prompt injection block according to target harness standards (Google Antigravity `<skills>` XML, Claude Code markdown list, or raw description dump).
-* **Startup Token Overhead**: Calculates the exact token weight of all injected skill descriptions sitting in the system prompt on turn 0.
-* **Description Verbosity Audit**: Flags skills whose descriptions exceed 100 tokens, helping identify descriptions that waste startup context window before a user even sends their first prompt.
-* **Formatted View**: Interactive cards allowing 1-click inspection of any skill directly from the context view.
-
-### 3. Context Window & Token Profiler
-* **Token Estimates**: Heuristic and BPE token costs for `SKILL.md` instructions and rule sets.
-* **Context Weight Tiers**:
-  * **Lean**: `< 1,000 tokens`
-  * **Moderate**: `1,000 – 4,000 tokens`
-  * **Heavy**: `> 4,000 tokens`
-* **Metrics**: Line counts, character counts, and word counts.
-
-### 4. Bundled Asset Explorer
-Many advanced skills bundle helper scripts (`.py`, `.sh`, `.mjs`), JSON schemas, and reference documents. Skill Hub lists the entire bundled file tree with file sizes and roles without needing to search hidden filesystem folders.
-
-### 5. Safe Skill Removal & Archival
-* Remove unused or redundant skills directly from the UI drawer.
-* Built-in harness skills are strictly protected from deletion.
-* Every removal creates an automated, timestamped archive in `~/.skill-hub/backups/` before deleting any file from disk.
-
-### 6. 1-Click MCP Updater
-Stale MCP packages break when upstream APIs evolve:
-* Detects package managers (`npx`, `uvx`, `pip`, `docker`).
-* Checks NPM, PyPI, and GitHub releases concurrently.
-* **1-Click Update**: Automatically bumps the pinned version in your config files (`mcp.json`) while preserving all existing formatting and saving a timestamped backup to `~/.skill-hub/backups/`.
-
-### 7. In-Agent Integration (`/skills`)
-Skill Hub exposes standard MCP tools to your AI agent:
-* `skill_hub_audit`: Returns a markdown summary of active harnesses and heavy skills.
-* `skill_hub_launch_ui`: Launches the web dashboard and opens your browser.
-* `skill_hub_list_skills`: Query skills programmatically.
-* `skill_hub_update_mcp`: Update package versions programmatically.
+* **Cross-Harness Discovery**: Aggregates active skills and MCP servers across installed harnesses (Google Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf) in one view.
+* **Startup Context Profiler**: Inspects the exact system prompt block (`<skills>` XML or markdown list) injected on turn 0, calculates startup token overhead, and flags verbose descriptions (>100 tokens).
+* **Token Weighting & Asset Explorer**: Profiles skill instructions with BPE token tiers (Lean, Moderate, Heavy) and explores bundled helper scripts (`.py`, `.sh`, `.mjs`), schemas, and references.
+* **Safe Skill Removal**: Deletes unused skills with automated, timestamped backups archived to `~/.skill-hub/backups/`. Built-in harness skills are strictly protected.
+* **1-Click MCP Updater**: Concurrently queries NPM, PyPI, and GitHub registries for outdated servers and updates pinned config versions safely.
+* **In-Agent MCP Tooling**: Exposes `/skills` and native MCP tools (`skill_hub_audit`, `skill_hub_launch_ui`) directly inside your coding sessions.
 
 ## System Architecture
 
