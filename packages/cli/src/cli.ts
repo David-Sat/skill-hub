@@ -22,7 +22,7 @@ program
   .option('--no-open', 'Do not automatically open the browser')
   .action(async (options) => {
     const port = parseInt(options.port, 10) || 4350;
-    console.log('\n( ಠ_ಠ ) SkillDesk • Starting server on 127.0.0.1...');
+    console.log('\n(ノ^_^)ノ┻━┻ SkillDesk • Starting server on 127.0.0.1...');
 
     try {
       const running = await startServer({
@@ -30,7 +30,7 @@ program
         autoOpen: options.open !== false,
       });
 
-      console.log(`( ಠ_ಠ ) SkillDesk is active at: ${running.url}`);
+      console.log(`(ノ^_^)ノ┻━┻ SkillDesk is active at: ${running.url}`);
       console.log('Press Ctrl+C to stop the server.\n');
 
       process.on('SIGINT', async () => {
@@ -50,7 +50,7 @@ program
   .description('Run a fast CLI scan of installed agent harnesses, skills, and MCPs')
   .option('--check-updates', 'Query registries for available updates', false)
   .action(async (options) => {
-    console.log('\n( ಠ_ಠ ) SkillDesk • Scanning installed AI agent harnesses...\n');
+    console.log('\n(ノ^_^)ノ┻━┻ SkillDesk • Scanning installed AI agent harnesses...\n');
     const scanResult = scanAll();
 
     const activeHarnesses = scanResult.harnesses.filter((h) => h.detected);

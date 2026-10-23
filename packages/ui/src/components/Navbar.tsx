@@ -23,7 +23,7 @@ export function Navbar({
   return (
     <header className="top-navbar">
       <div className="brand">
-        <span className="brand-kaomoji">( ಠ_ಠ )</span>
+        <span className="brand-kaomoji">(ノ^_^)ノ┻━┻</span>
         <div className="brand-text">
           <span className="brand-title">SkillDesk</span>
           <span className="brand-badge">local:4350</span>

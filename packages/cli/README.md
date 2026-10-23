@@ -1,4 +1,4 @@
-# ( ಠ_ಠ ) SkillDesk
+# (ノ^_^)ノ┻━┻ SkillDesk
 
 Unified Skill & MCP Manager for AI Coding Agents.
 

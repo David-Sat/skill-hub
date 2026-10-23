@@ -1,7 +1,7 @@
 {
   "name": "skilldesk",
   "version": "0.2.0",
-  "description": "( ಠ_ಠ ) Unified Skill & MCP Manager for AI Coding Agents",
+  "description": "(ノ^_^)ノ┻━┻ Unified Skill & MCP Manager for AI Coding Agents",
   "type": "module",
   "bin": {
     "skilldesk": "dist/cli.js",
