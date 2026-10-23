@@ -33,7 +33,10 @@ jobs:
         with:
           node-version: 22
           cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
+
+      - name: Upgrade npm CLI for OIDC Trusted Publishing
+        if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
+        run: npm install -g npm@latest
 
       - run: pnpm install --frozen-lockfile
         if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
@@ -41,9 +44,7 @@ jobs:
       - run: pnpm build
         if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
 
-      - name: Publish to NPM
+      - name: Publish to NPM via OIDC Trusted Publishing
         if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
         run: |
-          pnpm --filter skilldesk publish --access public --no-git-checks --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          cd packages/cli && npm publish --access public --provenance
