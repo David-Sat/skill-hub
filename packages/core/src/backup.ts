@@ -2,11 +2,18 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
-export function getSkillHubDataDir(): string {
-  const custom = process.env.SKILL_HUB_DATA_DIR;
+export function getSkillDeskDataDir(): string {
+  const custom = process.env.SKILLDESK_DATA_DIR || process.env.SKILL_HUB_DATA_DIR;
   if (custom) return custom;
-  return path.join(os.homedir(), '.skill-hub');
+  const defaultDir = path.join(os.homedir(), '.skilldesk');
+  const legacyDir = path.join(os.homedir(), '.skill-hub');
+  if (!fs.existsSync(defaultDir) && fs.existsSync(legacyDir)) {
+    return legacyDir;
+  }
+  return defaultDir;
 }
+
+export const getSkillHubDataDir = getSkillDeskDataDir;
 
 export function getBackupsDir(): string {
   return path.join(getSkillHubDataDir(), 'backups');

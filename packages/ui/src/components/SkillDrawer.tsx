@@ -122,7 +122,7 @@ export function SkillDrawer({ skill, onClose, onSaveSkill, onDeleteSkill }: Skil
             <div style={{ fontSize: '12px', color: 'var(--fg-muted)', marginBottom: '12px', lineHeight: '1.4' }}>
               This will permanently remove this skill from disk at{' '}
               <code style={{ color: 'var(--accent-fg)' }}>{skill.dirPath || skill.mainFilePath}</code>.
-              A timestamped backup copy is automatically created in <code style={{ color: 'var(--fg-default)' }}>~/.skill-hub/backups/</code>.
+              A timestamped backup copy is automatically created in <code style={{ color: 'var(--fg-default)' }}>~/.skilldesk/backups/</code>.
             </div>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button

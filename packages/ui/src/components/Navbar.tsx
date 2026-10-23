@@ -25,7 +25,7 @@ export function Navbar({
       <div className="brand">
         <span className="brand-kaomoji">( ಠ_ಠ )</span>
         <div className="brand-text">
-          <span className="brand-title">Skill Hub</span>
+          <span className="brand-title">SkillDesk</span>
           <span className="brand-badge">local:4350</span>
         </div>
       </div>

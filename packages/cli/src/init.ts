@@ -6,23 +6,23 @@ import { detectHarnesses } from '@skill-hub/scanner';
 import type { HarnessId } from '@skill-hub/core';
 
 export const SKILL_CONTENT = `---
-name: skill-hub
-description: Unified Skill & MCP Manager for AI Coding Agents. Use when the user asks to inspect installed skills, audit context token weights, review MCP servers, or check for updates. Also triggered by /skills or /skill-hub.
+name: skilldesk
+description: Unified Skill & MCP Manager for AI Coding Agents. Use when the user asks to inspect installed skills, audit context token weights, review MCP servers, or check for updates. Also triggered by /skills or /skilldesk.
 ---
 
-# Skill Hub - Unified Skill & MCP Manager
+# SkillDesk - Unified Skill & MCP Manager
 
-Skill Hub provides cross-harness visibility and management for all your AI coding agent skills and MCP servers.
+SkillDesk provides cross-harness visibility and management for all your AI coding agent skills and MCP servers.
 
 ## Workflow
 
-When the user asks to inspect skills, check MCPs, audit prompt token costs, or runs \`/skills\`:
+When the user asks to inspect skills, check MCPs, audit prompt token costs, or runs \`/skills\` or \`/skilldesk\`:
 
 ### 1. Perform a quick audit
-Call \`skill_hub_audit\` to inspect installed skills, token metrics, and pending updates:
+Call \`skilldesk_audit\` (or \`skill_hub_audit\`) to inspect installed skills, token metrics, and pending updates:
 \`\`\`json
 {
-  "name": "skill_hub_audit"
+  "name": "skilldesk_audit"
 }
 \`\`\`
 
@@ -30,24 +30,24 @@ Call \`skill_hub_audit\` to inspect installed skills, token metrics, and pending
 When the user wants to visually explore skills, read instructions, inspect bundled files, or click to update MCPs:
 \`\`\`json
 {
-  "name": "skill_hub_launch_ui"
+  "name": "skilldesk_launch_ui"
 }
 \`\`\`
 Tell the user:
-"I opened your Skill Hub dashboard at http://127.0.0.1:4350. You can inspect all installed skills, read instructions, view token gauges, and 1-click update outdated MCPs."
+"I opened your SkillDesk dashboard at http://127.0.0.1:4350. You can inspect all installed skills, read instructions, view token gauges, and 1-click update outdated MCPs."
 `;
 
 export const PLUGIN_MANIFEST = {
   $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
-  name: 'skill-hub',
+  name: 'skilldesk',
   description: 'Unified Skill & MCP Manager for AI Coding Agents with context token profiling and 1-click updates.',
   version: '0.1.0',
   author: {
     name: 'David Satomi',
     url: 'https://github.com/David-Sat',
   },
-  homepage: 'https://github.com/David-Sat/skill-hub',
-  repository: 'https://github.com/David-Sat/skill-hub',
+  homepage: 'https://github.com/David-Sat/skilldesk',
+  repository: 'https://github.com/David-Sat/skilldesk',
   license: 'MIT',
   keywords: ['skills', 'mcp', 'agent-plugin', 'token-profiler', 'developer-tools'],
 };
@@ -55,17 +55,17 @@ export const PLUGIN_MANIFEST = {
 export function getMcpConfig(useGlobalCmd: boolean = true) {
   if (useGlobalCmd) {
     return {
-      command: 'skill-hub',
+      command: 'skilldesk',
       args: ['mcp'],
     };
   }
   return {
     command: 'npx',
-    args: ['-y', 'skill-hub', 'mcp'],
+    args: ['-y', 'skilldesk', 'mcp'],
   };
 }
 
-export function mergeMcpServer(filePath: string, serverKey: string = 'skill-hub'): boolean {
+export function mergeMcpServer(filePath: string, serverKey: string = 'skilldesk'): boolean {
   try {
     let config: any = { mcpServers: {} };
     if (fs.existsSync(filePath)) {
@@ -88,7 +88,7 @@ export function mergeMcpServer(filePath: string, serverKey: string = 'skill-hub'
 
 export function writePluginBundle(pluginDir: string): boolean {
   try {
-    fs.mkdirSync(path.join(pluginDir, 'skills', 'skill-hub'), { recursive: true });
+    fs.mkdirSync(path.join(pluginDir, 'skills', 'skilldesk'), { recursive: true });
 
     // Manifest
     fs.writeFileSync(
@@ -99,12 +99,12 @@ export function writePluginBundle(pluginDir: string): boolean {
     // MCP config
     fs.writeFileSync(
       path.join(pluginDir, 'mcp_config.json'),
-      JSON.stringify({ mcpServers: { 'skill-hub': getMcpConfig() } }, null, 2) + '\n'
+      JSON.stringify({ mcpServers: { skilldesk: getMcpConfig() } }, null, 2) + '\n'
     );
 
     // Skill
     fs.writeFileSync(
-      path.join(pluginDir, 'skills', 'skill-hub', 'SKILL.md'),
+      path.join(pluginDir, 'skills', 'skilldesk', 'SKILL.md'),
       SKILL_CONTENT
     );
 
@@ -118,7 +118,7 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
   const harnesses = detectHarnesses();
   const detected = harnesses.filter((h) => h.detected);
 
-  console.log('\n[Skill Hub] Installer\n');
+  console.log('\n[SkillDesk] Installer\n');
 
   if (detected.length === 0) {
     console.log('No supported AI agent harnesses were detected in standard locations.');
@@ -142,7 +142,7 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
     });
 
     const answer = await new Promise<string>((resolve) => {
-      rl.question('Configure skill-hub for detected harnesses? [Y/n] ', resolve);
+      rl.question('Configure skilldesk for detected harnesses? [Y/n] ', resolve);
     });
     rl.close();
 
@@ -163,7 +163,7 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
 
     switch (h.id) {
       case 'antigravity': {
-        const pluginDir = path.join(home, '.gemini', 'config', 'plugins', 'skill-hub');
+        const pluginDir = path.join(home, '.gemini', 'config', 'plugins', 'skilldesk');
         writePluginBundle(pluginDir);
         console.log(`  [OK] Installed Antigravity plugin and /skills into ${pluginDir}`);
         break;
@@ -171,41 +171,41 @@ export async function runInteractiveInit(autoYes: boolean = false): Promise<void
       case 'claude-code': {
         if (h.paths.mcp) {
           mergeMcpServer(h.paths.mcp);
-          console.log(`  [OK] Added skill-hub MCP server to ${h.paths.mcp}`);
+          console.log(`  [OK] Added skilldesk MCP server to ${h.paths.mcp}`);
         }
         break;
       }
       case 'claude-desktop': {
         if (h.paths.mcp) {
           mergeMcpServer(h.paths.mcp);
-          console.log(`  [OK] Added skill-hub MCP server to ${h.paths.mcp}`);
+          console.log(`  [OK] Added skilldesk MCP server to ${h.paths.mcp}`);
         }
         break;
       }
       case 'cursor': {
         const cursorMcp = path.join(home, '.cursor', 'mcp.json');
         mergeMcpServer(cursorMcp);
-        console.log(`  [OK] Added skill-hub MCP server to ${cursorMcp}`);
+        console.log(`  [OK] Added skilldesk MCP server to ${cursorMcp}`);
         break;
       }
       case 'windsurf': {
         const windsurfMcp = path.join(home, '.codeium', 'windsurf', 'mcp_config.json');
         mergeMcpServer(windsurfMcp);
-        console.log(`  [OK] Added skill-hub MCP server to ${windsurfMcp}`);
+        console.log(`  [OK] Added skilldesk MCP server to ${windsurfMcp}`);
         break;
       }
       case 'cline':
       case 'roo-code': {
         if (h.paths.mcp) {
           mergeMcpServer(h.paths.mcp);
-          console.log(`  [OK] Added skill-hub MCP server to ${h.paths.mcp}`);
+          console.log(`  [OK] Added skilldesk MCP server to ${h.paths.mcp}`);
         }
         break;
       }
     }
   }
 
-  console.log('\nSetup complete. You can now launch Skill Hub anytime:');
-  console.log('   - Terminal: skill-hub');
+  console.log('\nSetup complete. You can now launch SkillDesk anytime:');
+  console.log('   - Terminal: skilldesk (or skill-desk)');
   console.log('   - Agent:    /skills\n');
 }

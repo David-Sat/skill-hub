@@ -1,14 +1,14 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "skill-hub",
+  "name": "skilldesk",
   "description": "Unified Skill & MCP Manager for AI Coding Agents with context token profiling and 1-click updates",
   "version": "0.1.0",
   "author": {
     "name": "David Satomi",
     "url": "https://github.com/David-Sat"
   },
-  "homepage": "https://github.com/David-Sat/skill-hub",
-  "repository": "https://github.com/David-Sat/skill-hub",
+  "homepage": "https://github.com/David-Sat/skilldesk",
+  "repository": "https://github.com/David-Sat/skilldesk",
   "license": "MIT",
   "keywords": [
     "skills",

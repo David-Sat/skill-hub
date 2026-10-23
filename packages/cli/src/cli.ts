@@ -10,19 +10,19 @@ import { runInteractiveInit } from './init.js';
 const program = new Command();
 
 program
-  .name('skill-hub')
+  .name('skilldesk')
   .description('Unified Skill & MCP Manager for AI Coding Agents')
   .version('0.1.0');
 
 // Default action: Start server & open UI
 program
   .command('open', { isDefault: true })
-  .description('Start the local Skill Hub web dashboard and open it in your browser')
+  .description('Start the local SkillDesk web dashboard and open it in your browser')
   .option('-p, --port <number>', 'Port to run on', '4350')
   .option('--no-open', 'Do not automatically open the browser')
   .action(async (options) => {
     const port = parseInt(options.port, 10) || 4350;
-    console.log('\n( ಠ_ಠ ) Skill Hub • Starting server on 127.0.0.1...');
+    console.log('\n( ಠ_ಠ ) SkillDesk • Starting server on 127.0.0.1...');
 
     try {
       const running = await startServer({
@@ -30,11 +30,11 @@ program
         autoOpen: options.open !== false,
       });
 
-      console.log(`( ಠ_ಠ ) Skill Hub is active at: ${running.url}`);
+      console.log(`( ಠ_ಠ ) SkillDesk is active at: ${running.url}`);
       console.log('Press Ctrl+C to stop the server.\n');
 
       process.on('SIGINT', async () => {
-        console.log('\nStopping Skill Hub...');
+        console.log('\nStopping SkillDesk...');
         await running.close();
         process.exit(0);
       });
@@ -50,7 +50,7 @@ program
   .description('Run a fast CLI scan of installed agent harnesses, skills, and MCPs')
   .option('--check-updates', 'Query registries for available updates', false)
   .action(async (options) => {
-    console.log('\n( ಠ_ಠ ) Skill Hub • Scanning installed AI agent harnesses...\n');
+    console.log('\n( ಠ_ಠ ) SkillDesk • Scanning installed AI agent harnesses...\n');
     const scanResult = scanAll();
 
     const activeHarnesses = scanResult.harnesses.filter((h) => h.detected);
@@ -86,13 +86,13 @@ program
         });
     }
 
-    console.log('\nRun "npx skill-hub" to launch the interactive visual explorer.\n');
+    console.log('\nRun "npx skilldesk" to launch the interactive visual explorer.\n');
   });
 
 // MCP command: Run stdio MCP server
 program
   .command('mcp')
-  .description('Run the Skill Hub Model Context Protocol (MCP) server over stdio')
+  .description('Run the SkillDesk Model Context Protocol (MCP) server over stdio')
   .action(async () => {
     const mcpServer = createMcpServer();
     const transport = new StdioServerTransport();
@@ -102,7 +102,7 @@ program
 // Init command: Cross-agent setup
 program
   .command('init')
-  .description('Configure Skill Hub into detected coding agents')
+  .description('Configure SkillDesk into detected coding agents')
   .option('-g, --global', 'Configure global agent configs')
   .option('-y, --yes', 'Automatically configure all detected agents without prompting')
   .action(async (options) => {

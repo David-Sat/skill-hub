@@ -44,6 +44,6 @@ jobs:
       - name: Publish to NPM
         if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
         run: |
-          pnpm --filter skill-hub publish --access public --no-git-checks --provenance
+          pnpm --filter skilldesk publish --access public --no-git-checks --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

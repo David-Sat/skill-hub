@@ -1,10 +1,11 @@
 {
-  "name": "skill-hub",
+  "name": "skilldesk",
   "version": "0.1.0",
   "description": "( ಠ_ಠ ) Unified Skill & MCP Manager for AI Coding Agents",
   "type": "module",
   "bin": {
-    "skill-hub": "./dist/cli.js"
+    "skilldesk": "dist/cli.js",
+    "skill-desk": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -46,11 +47,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/David-Sat/skill-hub.git"
+    "url": "git+https://github.com/David-Sat/skilldesk.git"
   },
-  "homepage": "https://github.com/David-Sat/skill-hub#readme",
+  "homepage": "https://github.com/David-Sat/skilldesk#readme",
   "bugs": {
-    "url": "https://github.com/David-Sat/skill-hub/issues"
+    "url": "https://github.com/David-Sat/skilldesk/issues"
   },
   "engines": {
     "node": ">=20.0.0"

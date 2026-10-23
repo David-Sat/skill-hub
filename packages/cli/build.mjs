@@ -44,7 +44,7 @@ async function bundle() {
   const uiDest = path.resolve(distDir, 'ui');
   if (fs.existsSync(uiSrc)) {
     fs.cpSync(uiSrc, uiDest, { recursive: true });
-    console.log('[skill-hub] Embedded UI dist into packages/cli/dist/ui');
+    console.log('[skilldesk] Embedded UI dist into packages/cli/dist/ui');
   }
 
   // 4. Sync root README and LICENSE for NPM publishing
@@ -57,10 +57,10 @@ async function bundle() {
     fs.copyFileSync(rootLicense, path.resolve(__dirname, 'LICENSE'));
   }
 
-  console.log('[skill-hub] Successfully bundled CLI & MCP distribution.');
+  console.log('[skilldesk] Successfully bundled CLI & MCP distribution.');
 }
 
 bundle().catch((err) => {
-  console.error('[skill-hub] Build failed:', err);
+  console.error('[skilldesk] Build failed:', err);
   process.exit(1);
 });
